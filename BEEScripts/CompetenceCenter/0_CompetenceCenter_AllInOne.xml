@@ -1,0 +1,689 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- Competence Center All In One Install Script
+-->
+
+<!-- Naming convenstion
+  Factory : FT
+  Field : FD
+  Content type : CT
+  List: LI
+  Lookup : LU
+
+-->
+
+
+<BEEScript>
+  <SetWebContext url="{__SP_STARTWEB__}">
+
+    <!-- INITIAL SETUP COMPONENTS-->
+
+
+    <ActivateSiteFeature featureId="f6924d362fa84f0bb16d06b7250180fa"
+    comment="PublishingSite (SharePoint Server Publishing Infrastructure)"
+    activate="true" />
+
+
+    <!-- SETUP CONTENT -->
+
+      <SetWebContext url="{__SP_STARTWEB__}">
+
+        <!-- GENERAL ELEMENTS -->
+
+        <!-- General Logging Field -->
+        <EnsureField name="breLog" title="BRE Log" type="Note" mode="CreateOrUpdate"></EnsureField>
+
+        <!-- CUSTOMER -->
+
+        <!-- Customer Fields -->
+        <EnsureField name="c_cCCFDCustomerID" title_EN="Customer ID" title_DE="Kunden ID" type="Integer" group="c_c" mode="CreateOrUpdate"></EnsureField>
+        <EnsureField name="c_cCCFDCustomerName" title_EN="Customer Name" title_DE="Kundenname" type="Text" group="c_c" mode="CreateOrUpdate"></EnsureField>
+        <EnsureField name="c_cCCFDCustomerAddress" title_EN="Customer Address" title_DE="Kundenadresse" type="Text" group="c_c" mode="CreateOrUpdate"></EnsureField>
+        <EnsureField name="c_cCCFDCustomerDescription" title_EN="Descprition" title_DE="Beschreibung" type="Note" group="c_c" mode="CreateOrUpdate"></EnsureField>
+
+        <!-- Customer Content Type -->
+        <EnsureContentType mode="createOrUpdate" name="c_cCCCTCustomer" group="c_c" template_DE="Element" template_EN="Item">
+          <AssignField name="c_cCCFDCustomerID" hidden="False" />
+          <AssignField name="c_cCCFDCustomerName" required="true" hidden="False" />
+          <AssignField name="c_cCCFDCustomerDescription" hidden="False" />
+          <AssignField name="WorkAddress" />
+          <AssignField name="WorkZip" />
+          <AssignField name="WorkCity" />
+          <AssignField name="WorkCountry" />
+          <AssignField name="WorkFax" />
+          <AssignField name="WorkPhone" />
+          <AssignField name="EMail" />
+          <AssignField name="WebPage" />
+          <AssignField name="breLog" hidden="False" />
+        </EnsureContentType>
+
+        <!-- Customer list -->
+        <EnsureList type="GenericList" name="c_cCCLICustomer" title_EN="Customers" title_DE="Kunden" contentTypesEnabled="True" quickLaunchEnabled="False" p_EnableFolderCreation="true">
+          <AssignContentType name="c_cCCCTCustomer" position="1" />
+          <RemoveContentType name_DE="Element" name_EN="Item" />
+          <EnsureView name="[defaultView]"
+                      ViewFields="Edit, LinkTitle, c_cCCFDCustomerID, c_cCCFDCustomerName, c_cCCFDCustomerDescription"
+                      showFolders="false"></EnsureView>
+          <EnsureView name="Detail"
+                      ViewFields="Edit, LinkTitle, c_cCCFDCustomerID, c_cCCFDCustomerName, c_cCCFDCustomerDescription, WorkAddress, WorkZip, WorkCity, WorkCountry, WorkFax, WorkPhone, EMail"
+                      showFolders="false"></EnsureView>
+          <EnsureView name="debug"
+                      ViewFields="Edit, LinkTitle, c_cCCFDCustomerID, c_cCCFDCustomerName, c_cCCFDCustomerDescription, breLog"
+                      showFolders="false"></EnsureView>
+        </EnsureList>
+
+        <!-- MEMBERS ( OF THE CUSTOMERS ) -->
+
+        <EnsureField name="c_cCCFDMemberType" title_EN="Member type" title_DE="Mitglied Typ" type="Choice" choices="basic user, power user, admin" group="c_c" mode="CreateOrUpdate"></EnsureField>
+
+        <!-- field lookup customer -->
+        <EnsureField name="c_cCCFDLUCustomer" type="Lookup" lookupField="c_cCCFDCustomerName" group="c_c" mode="createOrUpdate"
+          title_DE="Kunde" lookupList="c_cCCLICustomer"
+          title_EN="Customer" />
+
+        <EnsureContentType group="c_c" mode="createOrUpdate" name="c_cCCCTMember" updateChildren="true"
+          title_DE="Ansprechpartner" template_DE="Kontakt"
+          title_EN="Contact Person" template_EN="Contact">
+          <RemoveField name="CompanyPhonetic" />
+          <RemoveField name="HomePhone" />
+          <RemoveField name="WorkState" />
+          <RemoveField name="WebPage" />
+          <RemoveField name="Comments" />
+          <AssignField name="c_cCCFDLUCustomer" />
+          <AssignField name="breLog" hidden="False" />
+        </EnsureContentType>
+
+        <!-- Members list -->
+        <EnsureList type="GenericList" name="c_cCCLIMembers" title_EN="Members" title_DE="Mitglied" contentTypesEnabled="True" quickLaunchEnabled="False" p_EnableFolderCreation="true">
+          <AssignContentType name="c_cCCCTCustomer" position="1" />
+          <RemoveContentType name_DE="Element" name_EN="Item" />
+          <EnsureView name="[defaultView]"
+                      ViewFields="Edit, LinkTitle, LastNamePhonetic,FirstNamePhonetic, c_cCCFDCustomerName"
+                      showFolders="false"></EnsureView>
+          <EnsureView name="Detail"
+                      ViewFields="Edit, LinkTitle, LastNamePhonetic,FirstNamePhonetic, c_cCCFDCustomerName, WorkPhone, EMail, WorkCity, WorkCountry"
+                      showFolders="false"></EnsureView>
+          <EnsureView name="debug"
+                      ViewFields="Edit, LinkTitle, LastNamePhonetic,FirstNamePhonetic, c_cCCFDCustomerName, breLog"
+                      showFolders="false"></EnsureView>
+        </EnsureList>
+
+        <!-- CONTRACT -->
+
+        <!-- Contract Fields -->
+        <EnsureField name="c_cCCFDContractID" title_EN="Contract ID" title_DE="Vertrag ID" type="Integer" group="c_c" mode="CreateOrUpdate"></EnsureField>
+        <EnsureField name="c_cCCFDContractName" title_EN="Contract Name" title_DE="Vertragsname" type="Text" group="c_c" mode="CreateOrUpdate"></EnsureField>
+        <EnsureField name="c_cCCFDContractType" title_EN="Contract Type" title_DE="Vertragtyp" type="Choice" group="c_c" mode="CreateOrUpdate"></EnsureField>
+        <EnsureField name="c_cCCFDContractDescription" title_EN="Descprition" title_DE="Beschreibung" type="Note" group="c_c" mode="CreateOrUpdate"></EnsureField>
+
+        <!-- Contract Content Type -->
+        <EnsureContentType mode="createOrUpdate" name="c_cCCCTContract" group="c_c" template="Document">
+          <AssignField name="c_cCCFDContractID" hidden="False" />
+          <AssignField name="c_cCCFDContractName" required="true" hidden="False" />
+          <AssignField name="c_cCCFDContractType" hidden="False" />
+          <AssignField name="c_cCCFDContractDescription" hidden="False" />
+          <AssignField name="c_cCCFDLUCustomer" hidden="False" />
+          <AssignField name="breLog" hidden="False" />
+        </EnsureContentType>
+
+        <!-- Contract list -->
+        <EnsureList type="DocumentLibrary" name="c_cCCLIContract" title_EN="Contract" title_DE="Verträge" contentTypesEnabled="True" quickLaunchEnabled="False" p_EnableFolderCreation="true">
+          <AssignContentType name="c_cCCCTContract" position="1" />
+          <RemoveContentType name_DE="Dokument" name_EN="Document" />
+          <EnsureView name="[defaultView]"
+                      ViewFields="Edit, LinkTitle, c_cCCFDContractID, c_cCCFDContractName, c_cCCFDLUCustomer, c_cCCFDContractDescription"
+                      showFolders="false"></EnsureView>
+          <EnsureView name="debug"
+                      ViewFields="Edit, LinkTitle, c_cCCFDContractID, c_cCCFDContractName, c_cCCFDLUCustomer, c_cCCFDContractDescription, breLog"
+                      showFolders="false"></EnsureView>
+          <EnsureView name="dashboard"
+                      ViewFields="Edit, LinkTitle, c_cCCFDContractID, c_cCCFDContractName, c_cCCFDLUCustomer, c_cCCFDContractDescription"
+                      showFolders="false"
+                      p_RowLimit="5"></EnsureView>
+        </EnsureList>
+
+        <!-- SOLUTION STORE -->
+
+        <!-- Solution Store Fields -->
+        <EnsureField name="c_cCCFDSolutionID" title_EN="Solution ID" title_DE="Lösung ID" type="Integer" group="c_c" mode="CreateOrUpdate"></EnsureField>
+        <EnsureField name="c_cCCFDSolutionName" title_EN="Solution Name" title_DE="Lösung Name" type="Text" group="c_c" mode="CreateOrUpdate"></EnsureField>
+        <EnsureField name="c_cCCFDSolutionType" title_EN="Solution Type" title_DE="Lösung Typ" type="Choice" choices="BEEScript, Feature, App, Manual" group="c_c" mode="CreateOrUpdate"></EnsureField>
+        <EnsureField name="c_cCCFDSolutionDescription" title_EN="Descprition" title_DE="Beschreibung" type="Note" group="c_c" mode="CreateOrUpdate"></EnsureField>
+
+        <!-- Solution Store Content Type -->
+        <EnsureContentType mode="createOrUpdate" name="c_cCCCTSolution" group="c_c" template_DE="Element" template_EN="Item">
+          <AssignField name="c_cCCFDSolutionID" hidden="False" />
+          <AssignField name="c_cCCFDSolutionName" required="true" hidden="False" />
+          <AssignField name="c_cCCFDSolutionDescription" hidden="False" />
+          <AssignField name="breLog" hidden="False" />
+        </EnsureContentType>
+
+        <!-- Solution list -->
+        <EnsureList type="GenericList" name="c_cCCLISolution" title_EN="Solution" title_DE="Lösungen" contentTypesEnabled="True" quickLaunchEnabled="False">
+          <AssignContentType name="c_cCCCTSolution" position="1" />
+          <RemoveContentType name_DE="Element" name_EN="Item" />
+          <EnsureView name="[defaultView]" ViewFields="Edit, LinkTitle, c_cCCFDSolutionID, c_cCCFDSolutionName, c_cCCFDSolutionDescription"></EnsureView>
+          <EnsureView name="debug" ViewFields="Edit, LinkTitle, c_cCCFDSolutionID, c_cCCFDSolutionName, c_cCCFDSolutionDescription, breLog"></EnsureView>
+        </EnsureList>
+
+        <!-- MODULES -->
+
+        <!-- Modules Fields -->
+        <EnsureField name="c_cCCFDModuleID" title_EN="Module ID" title_DE="Module ID" group="c_c" type="Integer" mode="CreateOrUpdate"></EnsureField>
+        <EnsureField name="c_cCCFDModuleName" title_EN="Module Name" title_DE="Module Name" group="c_c" type="Text" mode="CreateOrUpdate"></EnsureField>
+        <EnsureField name="c_cCCFDModuleType" title_EN="Module Type" title_DE="Module Type" group="c_c" type="Choice" choices="StartUp, Module, Plugin, Extention" mode="CreateOrUpdate"></EnsureField>
+        <EnsureField name="c_cCCFDModuleDescription" title_EN="Descprition" title_DE="Beschreibung" type="Note" group="c_c" mode="CreateOrUpdate"></EnsureField>
+        <EnsureField name="c_cCCFDModuleDemo" title_EN="Demo" title_DE="Demo" type="URL" group="c_c" mode="CreateOrUpdate"></EnsureField>
+
+        <!-- field lookup solution name -->
+        <EnsureField name="c_cCCFDLUSolution" type="Lookup" lookupField="c_cCCFDSolutionName" group="c_c" mode="createOrUpdate"
+          title_DE="Lösung Name" lookupList="c_cCCLISolution"
+          title_EN="Solution Name" />
+
+        <!-- Module Content Type -->
+        <EnsureContentType mode="createOrUpdate" name="c_cCCCTModule" group="c_c" template_DE="Element" template_EN="Item">
+          <AssignField name="c_cCCFDModuleID" hidden="False" />
+          <AssignField name="c_cCCFDModuleName" required="true" hidden="False" />
+          <AssignField name="c_cCCFDModuleType" hidden="False" />
+          <AssignField name="c_cCCFDModuleDescription" hidden="False" />
+          <AssignField name="c_cCCFDLUSolution" hidden="False" />
+          <AssignField name="breLog" hidden="False" />
+        </EnsureContentType>
+
+        <!-- Module list -->
+        <EnsureList type="GenericList" name="c_cCCLIModule" title_EN="Module" title_DE="Module" contentTypesEnabled="True" quickLaunchEnabled="False">
+          <AssignContentType name="c_cCCCTModule" position="1" />
+          <RemoveContentType name_DE="Element" name_EN="Item" />
+          <EnsureView name="[defaultView]" ViewFields="Edit, LinkTitle, c_cCCFDModuleID, c_cCCFDModuleName, c_cCCFDModuleType, c_cCCFDModuleDescription, c_cCCFDLUSolution"></EnsureView>
+          <EnsureView name="debug" ViewFields="Edit, LinkTitle, c_cCCFDModuleID, c_cCCFDModuleName, c_cCCFDModuleType, c_cCCFDModuleDescription, c_cCCFDLUSolution, breLog"></EnsureView>
+          <EnsureView name="dashboard"
+                      ViewFields="Edit, LinkTitle, c_cCCFDModuleID, c_cCCFDModuleName, c_cCCFDModuleType, c_cCCFDModuleDescription, c_cCCFDLUSolution, breLog"
+                      sortFields="c_cCCFDModuleID"
+                      p_RowLimit="5"></EnsureView>
+
+          <If condition="{__LCID__} == 1031">
+            <EnsureItems keyFields="c_cCCFDModuleID" mode="createOrUpdate" separator=";" quotedSeparator="\;">
+              <![CDATA[
+					  c_cCCFDModuleID; c_cCCFDModuleName; c_cCCFDModuleType; c_cCCFDModuleDescription
+            1; StartUp; StartUp; Initiale Bereitstellung
+            2; Portal Module; Module; Standard Portal Module
+					  3; Vertrag Module; Module; Vertragsmanagement Module
+					  4; Qualität Module; Module; Qualitätsmanagement Module
+					  5; ISO Module; Module; ISO Module          
+				  ]]>
+            </EnsureItems>
+          </If>
+          <Else>
+            <EnsureItems keyFields="c_cCCFDModuleID" mode="createOrUpdate" separator=";" quotedSeparator="\;">
+              <![CDATA[
+					  c_cCCFDModuleID; c_cCCFDModuleName; c_cCCFDModuleType; c_cCCFDModuleDescription
+            1; StartUp; StartUp; Initial setup
+            2; Portal Module; Module; Standard Portal Module
+					  3; Contract Module; Module; Contract Management Module
+					  4; Quality Module; Module; Quality Managment Module
+					  5; ISO Module; Module; ISO Module          
+				  ]]>
+            </EnsureItems>
+          </Else>
+        </EnsureList>
+
+        <!-- TRAININGS -->
+
+        <!-- Training Fields -->
+        <EnsureField name="c_cCCFDTrainingID" title_EN="Training ID" title_DE="Schulung ID" group="c_c" type="Integer" mode="CreateOrUpdate"></EnsureField>
+        <EnsureField name="c_cCCFDTrainingName" title_EN="Training Name" title_DE="Schulung Name" group="c_c" type="Text" mode="CreateOrUpdate"></EnsureField>
+        <EnsureField name="c_cCCFDTrainingType" title_EN="Training Type" title_DE="Schulung Type" group="c_c" type="Choice" choices="online, vor Ort" mode="CreateOrUpdate"></EnsureField>
+        <EnsureField name="c_cCCFDTrainingLevel" title_EN="Training Level" title_DE="Schwiereigkeit Stufe" group="c_c" type="Choice" choices="Anfänger, IT Fachkraft" mode="CreateOrUpdate"></EnsureField>
+        <EnsureField name="c_cCCFDTrainingDescription" title_EN="Descprition" title_DE="Beschreibung" type="Note" group="c_c" mode="CreateOrUpdate"></EnsureField>
+
+        <!-- Training Content Type -->
+        <EnsureContentType mode="createOrUpdate" name="c_cCCCTTraining" group="c_c" template_DE="Element" template_EN="Item">
+          <AssignField name="c_cCCFDTrainingID" hidden="False" />
+          <AssignField name="c_cCCFDTrainingName" required="true" hidden="False" />
+          <AssignField name="c_cCCFDTrainingType" hidden="False" />
+          <AssignField name="c_cCCFDTrainingLevel" hidden="False" />
+          <AssignField name="c_cCCFDTrainingDescription" hidden="False" />
+          <AssignField name="breLog" hidden="False" />
+        </EnsureContentType>
+
+        <!-- Training list -->
+        <EnsureList type="GenericList" name="c_cCCLITraining" title_EN="Training" title_DE="Schulung" contentTypesEnabled="True" quickLaunchEnabled="False">
+          <AssignContentType name="c_cCCCTTraining" position="1" />
+          <RemoveContentType name_DE="Element" name_EN="Item" />
+          <EnsureView name="[defaultView]"
+                      ViewFields="Edit, LinkTitle, c_cCCFDTrainingID, c_cCCFDTrainingName, c_cCCFDModuleType, c_cCCFDTrainingType, c_cCCFDTrainingLevel, c_cCCFDTrainingDescription"
+                    ></EnsureView>
+          <EnsureView name="debug"
+                      ViewFields="Edit, LinkTitle, c_cCCFDTrainingID, c_cCCFDTrainingName, c_cCCFDModuleType, c_cCCFDTrainingType, c_cCCFDTrainingLevel, c_cCCFDTrainingDescription, breLog"
+                    ></EnsureView>
+
+          <If condition="{__LCID__} == 1031">
+            <EnsureItems keyFields="c_cCCFDTrainingID" mode="createOrUpdate" separator=";" quotedSeparator="\;">
+              <![CDATA[
+					    c_cCCFDTrainingID; c_cCCFDTrainingName; c_cCCFDTrainingType; c_cCCFDTrainingLevel; c_cCCFDTrainingDescription
+              1; Anfänger Kurse; online; Anfänger; Anfänger Kurse für die Portal Lösung
+	            1; ISO Audit; online; Anfänger; ISO Audit
+           ]]>
+            </EnsureItems>
+          </If>
+          <Else>
+            <EnsureItems keyFields="c_cCCFDTrainingID" mode="createOrUpdate" separator=";" quotedSeparator="\;">
+              <![CDATA[
+					    c_cCCFDTrainingID; c_cCCFDTrainingName; c_cCCFDTrainingType; c_cCCFDTrainingLevel; c_cCCFDTrainingDescription
+              1; Anfänger Kurse; online; Anfänger; Anfänger Kurse für die Portal Lösung
+	            1; ISO Audit; online; Anfänger; ISO Audit
+				    ]]>
+            </EnsureItems>
+          </Else>
+        </EnsureList>
+
+        <!-- ORDER -->
+
+        <!-- Order Fields -->
+        <EnsureField name="c_cCCFDOrderID" title_EN="Order ID" title_DE="Bestellung ID" type="Integer" group="c_c" mode="CreateOrUpdate"></EnsureField>
+        <EnsureField name="c_cCCFDOrderName" title_EN="Order Name" title_DE="Bestellung Name" group="c_c" type="Text" mode="CreateOrUpdate"></EnsureField>
+        <EnsureField name="c_cCCFDOrderType" title_EN="Order Type" title_DE="Bestellung Typ" group="c_c" type="Choice" choices="Module, Training" mode="CreateOrUpdate"></EnsureField>
+        <EnsureField name="c_cCCFDOrderState" title_EN="Order State" title_DE="Bestellung Status" group="c_c" type="Choice" choices="Init, InWork, Approved" mode="CreateOrUpdate"></EnsureField>
+        <EnsureField name="c_cCCFDOrderDescription" title_EN="Descprition" title_DE="Beschreibung" type="Note" group="c_c" mode="CreateOrUpdate"></EnsureField>
+
+        <!-- field lookup Module -->
+        <EnsureField name="c_cCCFDLUModule" type="Lookup" lookupField="c_cCCFDModuleName" group="c_c" mode="createOrUpdate"
+          title_DE="Bestellbar Komponent" lookupList="c_cCCLIModule"
+          title_EN="Module" />
+
+        <!-- field lookup Training -->
+        <EnsureField name="c_cCCFDLUTraining" type="Lookup" lookupField="c_cCCFDTrainingName" group="c_c" mode="createOrUpdate"
+          title_DE="Schulung" lookupList="c_cCCLITraining"
+          title_EN="Training" />
+
+        <!-- Order Content Type -->
+        <EnsureContentType mode="createOrUpdate" name="c_cCCCTOrderModule" group="c_c" template_DE="Element" template_EN="Item">
+          <AssignField name="c_cCCFDOrderID" hidden="False" />
+          <AssignField name="c_cCCFDOrderName" required="true" hidden="False" />
+          <AssignField name="c_cCCFDOrderType" hidden="False" />
+          <AssignField name="c_cCCFDOrderState" hidden="False" />
+          <AssignField name="c_cCCFDLUModule" hidden="False" />
+          <AssignField name="c_cCCFDOrderDescription" hidden="False" />
+          <AssignField name="breLog" hidden="False" />
+        </EnsureContentType>
+
+        <EnsureContentType mode="createOrUpdate" name="c_cCCCTOrderTraining" group="c_c" template_DE="Element" template_EN="Item">
+          <AssignField name="c_cCCFDOrderID" hidden="False" />
+          <AssignField name="c_cCCFDOrderName" required="true" hidden="False" />
+          <AssignField name="c_cCCFDOrderType" hidden="False" />
+          <AssignField name="c_cCCFDOrderState" hidden="False" />
+          <AssignField name="c_cCCFDLUTraining" hidden="False" />
+          <AssignField name="c_cCCFDOrderDescription" hidden="False" />
+          <AssignField name="breLog" hidden="False" />
+        </EnsureContentType>
+
+        <!-- Order list -->
+        <EnsureList type="GenericList" name="c_cCCLIOrder" title_EN="Order" title_DE="Bestellung" contentTypesEnabled="True" quickLaunchEnabled="False">
+          <AssignContentType name="c_cCCCTOrderModule" position="1" />
+          <AssignContentType name="c_cCCCTOrderTraining" position="2" />
+          <RemoveContentType name_DE="Element" name_EN="Item" />
+          <EnsureView name="[defaultView]"
+                      ViewFields="Edit, LinkTitle, c_cCCFDOrderID, c_cCCFDOrderName, c_cCCFDOrderType, c_cCCFDOrderDescription"
+                    ></EnsureView>
+          <EnsureView name="debug"
+                      ViewFields="Edit, LinkTitle, c_cCCFDOrderID, c_cCCFDOrderName, c_cCCFDOrderType, c_cCCFDOrderDescription, breLog"
+                    ></EnsureView>
+          <EnsureView name="dashboardMyActiveModule"
+                      ViewFields="c_cCCFDOrderID, c_cCCFDLUModule"
+                      p_RowLimit="5"
+                      sortFields="Created"
+                    >
+            <![CDATA[
+                      <Where>
+                      <And>
+                        <Eq>
+                          <FieldRef Name="c_cCCFDOrderType" />
+                          <Value Type="Choice">Module</Value>
+                        </Eq>
+                        <Eq>
+                          <FieldRef Name="c_cCCFDOrderState" />
+                          <Value Type="Choice">Approved</Value>
+                        </Eq>
+                      </And>
+                      </Where>
+                    ]]>
+          </EnsureView>
+          <EnsureView name="dashboardMyActiveTraining"
+                      ViewFields="c_cCCFDOrderID, c_cCCFDLUModule"
+                      p_RowLimit="5"
+                      sortFields="Created"
+                    >
+            <![CDATA[
+                      <Where>
+                      <And>
+                        <Eq>
+                          <FieldRef Name="c_cCCFDOrderType" />
+                          <Value Type="Choice">Module</Value>
+                        </Eq>
+                        <Eq>
+                          <FieldRef Name="c_cCCFDOrderState" />
+                          <Value Type="Choice">Approved</Value>
+                        </Eq>
+                      </And>
+                      </Where>
+                    ]]>
+          </EnsureView>
+          <EnsureView name="dashboardMyInWorkModule"
+                      ViewFields="c_cCCFDOrderID, c_cCCFDLUModule"
+                      p_RowLimit="5"
+                      sortFields="Created"
+                    >
+            <![CDATA[
+                      <Where>
+                      <And>
+                        <Eq>
+                          <FieldRef Name="c_cCCFDOrderType" />
+                          <Value Type="Choice">Training</Value>
+                        </Eq>
+                        <Eq>
+                          <FieldRef Name="c_cCCFDOrderState" />
+                          <Value Type="Choice">InWork</Value>
+                        </Eq>
+                      </And>
+                      </Where>
+                    ]]>
+          </EnsureView>
+          <EnsureView name="dashboardMyInWorkTraining"
+                      ViewFields="c_cCCFDOrderID, c_cCCFDLUModule"
+                      p_RowLimit="5"
+                      sortFields="Created"
+                    >
+            <![CDATA[
+                      <Where>
+                      <And>
+                        <Eq>
+                          <FieldRef Name="c_cCCFDOrderType" />
+                          <Value Type="Choice">Training</Value>
+                        </Eq>
+                        <Eq>
+                          <FieldRef Name="c_cCCFDOrderState" />
+                          <Value Type="Choice">InWork</Value>
+                        </Eq>
+                      </And>
+                      </Where>
+                    ]]>
+          </EnsureView>
+        </EnsureList>
+
+        <!-- TASK-->
+
+        <!-- Order Content Type -->
+        <EnsureContentType mode="createOrUpdate" name="c_cCCCTTaskOrderComponent" group="c_c" template="Task">
+          <AssignField name="c_cCCFDLUModule" hidden="False" />
+          <AssignField name="c_cCCFDLUCustomer" hidden="False" />
+          <AssignField name="breLog" hidden="False" />
+        </EnsureContentType>
+
+        <!-- Task list -->
+        <EnsureList type="Tasks" name="c_cCCLITasks" title_EN="Tasks" title_DE="Aufgaben" contentTypesEnabled="True" quickLaunchEnabled="False">
+          <AssignContentType name="c_cCCCTTaskOrderComponent" position="1" />
+          <RemoveContentType name_DE="Aufgabe" name_EN="Task" />
+        </EnsureList>
+
+
+        <!-- TECHNIQUAL LISTS -->
+
+        <!-- Tenant Fields -->
+        <EnsureField name="c_cCCFDTenantID" title_EN="Tenant ID" title_DE="Tenant ID" type="Integer" group="c_c" mode="CreateOrUpdate"></EnsureField>
+        <EnsureField name="c_cCCFDTenantName" title_EN="Tenant Name" title_DE="Tenant Name" group="c_c" type="Text" mode="CreateOrUpdate"></EnsureField>
+        <EnsureField name="c_cCCFDTenantUrl" title_EN="Tenant Url" title_DE="Tenant URL" type="URL" group="c_c" mode="CreateOrUpdate"></EnsureField>
+        <EnsureField name="c_cCCFDTenantDescription" title_EN="Description" title_DE="Beschreibung" type="Note" group="c_c" mode="CreateOrUpdate"></EnsureField>
+
+        <!-- Tenant Content Type -->
+        <EnsureContentType mode="createOrUpdate" name="c_cCCCTTenant" group="c_c" template_DE="Element" template_EN="Item">
+          <AssignField name="c_cCCFDTenantID" required="true" hidden="False" />
+          <AssignField name="c_cCCFDTenantName" required="true" hidden="False" />
+          <AssignField name="c_cCCFDTenantUrl" hidden="False" />
+          <AssignField name="c_cCCFDTenantDescription" hidden="False" />
+          <AssignField name="breLog" hidden="False" />
+        </EnsureContentType>
+
+        <!-- Tenant List -->
+        <EnsureList type="GenericList" name="c_cCCLITenant" title_EN="Tenant" title_DE="Tenant" contentTypesEnabled="True" quickLaunchEnabled="False">
+          <AssignContentType name="c_cCCCTTenant" position="1" />
+          <RemoveContentType name_DE="Element" name_EN="Item" />
+          <EnsureView name="[defaultView]" ViewFields="Edit, LinkTitle, c_cCCFDTenantID, c_cCCFDTenantName, c_cCCFDTenantUrl, c_cCCFDTenantDescription"></EnsureView>
+          <EnsureView name="debug" ViewFields="Edit, LinkTitle, c_cCCFDTenantID, c_cCCFDTenantName, c_cCCFDTenantUrl, c_cCCFDTenantDescription, breLog"></EnsureView>
+          <EnsureItems keyFields="c_cCCFDTenantID" mode="createOrUpdate" separator=";" quotedSeparator="\;">
+            <![CDATA[
+					    c_cCCFDTenantID; c_cCCFDTenantName; c_cCCFDTenantUrl; c_cCCFDTenantDescription
+              1; Competence; ;Navigation for the competence center
+              2; Demo; ;Demo Tenant nomber 1
+              3; Demo; ;Demo Tenant nomber 2
+              4; TKLI; ;TKLindau Tenant
+              
+				    ]]>
+          </EnsureItems>
+        </EnsureList>
+
+        <!-- Navigation List -->
+
+        <!-- Navigation Fields -->
+        <EnsureField name="c_cCCFDNavigationItemID" title_EN="Navigation Item ID" title_DE="Navigation Elemente ID" type="Integer" group="c_c" mode="CreateOrUpdate"></EnsureField>
+        <EnsureField name="c_cCCFDNavigationItemName" title_EN="Navigation Item Name" title_DE="Navigation Elemente Name" group="c_c" type="Text" mode="CreateOrUpdate"></EnsureField>
+        <EnsureField name="c_cCCFDNavigationItemNameDE" title_EN="Navigation Item Name DE" title_DE="Navigation Elemente Name DE" group="c_c" type="Text" mode="CreateOrUpdate"></EnsureField>
+        <EnsureField name="c_cCCFDNavigationItemUrl" title_EN="Navigation Item URL" title_DE="Navigation Elemente URL" group="c_c" type="Text" mode="CreateOrUpdate"></EnsureField>
+        <EnsureField name="c_cCCFDNavigationItemType" title_EN="Navigation Item Type" title_DE="Navigation Elemente Typ" group="c_c" type="Choice" choices="Above, Bellow" mode="CreateOrUpdate"></EnsureField>
+        <EnsureField name="c_cCCFDNavigationItemLevel" title_EN="Navigation Item Level" title_DE="Navigation Elemente Stufe" group="c_c" type="Choice" choices="First, Second, Third" mode="CreateOrUpdate"></EnsureField>
+        <EnsureField name="c_cCCFDNavigationDescription" title_EN="Descprition" title_DE="Beschreibung" type="Note" group="c_c" mode="CreateOrUpdate"></EnsureField>
+
+        <!-- Navigation Content Type -->
+        <EnsureContentType mode="createOrUpdate" name="c_cCCCTNavigation" group="c_c" template_DE="Element" template_EN="Item">
+          <AssignField name="c_cCCFDNavigationItemID" required="true" hidden="False" />
+          <AssignField name="c_cCCFDNavigationItemName" required="true" hidden="False" />
+          <AssignField name="c_cCCFDNavigationItemNameDE" hidden="False" />
+          <AssignField name="c_cCCFDNavigationItemUrl" hidden="False" />
+          <AssignField name="c_cCCFDNavigationItemType" hidden="False" />
+          <AssignField name="c_cCCFDNavigationItemLevel" hidden="False" />
+          <AssignField name="c_cCCFDNavigationDescription" hidden="False" />
+          <AssignField name="breLog" hidden="False" />
+        </EnsureContentType>
+
+        <!-- Navigation list -->
+        <EnsureList type="GenericList" name="c_cCCLINavigation" title_EN="Navigation" title_DE="Navigation" contentTypesEnabled="True" quickLaunchEnabled="False">
+          <AssignContentType name="c_cCCCTNavigation" position="1" />
+          <RemoveContentType name_DE="Element" name_EN="Item" />
+        </EnsureList>
+
+        <!-- field lookup Parent -->
+        <EnsureField name="c_cCCFDLUNavigationItemParent" type="Lookup" lookupField="c_cCCFDNavigationItemName" group="c_c" mode="createOrUpdate"
+          title_DE="Navigation Elemente Vorfahr" lookupList="c_cCCLINavigation"
+          title_EN="Navigation Item Parent" />
+
+        <!-- field lookup Tenant -->
+        <EnsureField name="c_cCCFDLUNavigationTenant" type="Lookup" lookupField="c_cCCFDTenantName" group="c_c" mode="createOrUpdate"
+          title_DE="Navigation Tenant" lookupList="c_cCCLITenant"
+          title_EN="Navigation Tenant" />
+
+        <!-- field lookup Tenant -->
+        <EnsureField name="c_cCCFDLUNavigationTenantUrl" type="Lookup" lookupField="c_cCCFDTenantUrl" group="c_c" mode="createOrUpdate"
+          title_DE="Navigation Tenant Url" lookupList="c_cCCLITenant"
+          title_EN="Navigation Tenant Url" />
+
+
+        <!-- Aktualisierung des Geschäftspartner-Inhaltstyps bzgl. Lookup -->
+        <SetContentTypeContext name="c_cCCCTNavigation">
+          <AssignField name="c_cCCFDLUNavigationItemParent" updateChildren="true" />
+          <AssignField name="c_cCCFDLUNavigationTenant" updateChildren="true" />
+          <AssignField name="c_cCCFDLUNavigationTenantUrl" updateChildren="true" />
+        </SetContentTypeContext>
+
+        <EnsureList type="GenericList" name="c_cCCLINavigation" title_EN="Navigation" title_DE="Navigation" contentTypesEnabled="True" quickLaunchEnabled="False">
+          <AssignContentType name="c_cCCCTNavigation" position="1" />
+          <RemoveContentType name_DE="Element" name_EN="Item" />
+          <EnsureView name="[defaultView]" ViewFields="Edit, LinkTitle, c_cCCFDNavigationItemID, c_cCCFDNavigationItemName, c_cCCFDNavigationItemNameDE, c_cCCFDNavigationItemType, c_cCCFDNavigationItemLevel, c_cCCFDNavigationItemUrl, c_cCCFDNavigationDescription, c_cCCFDLUNavigationItemParent, c_cCCFDLUNavigationTenant, c_cCCFDLUNavigationTenantUrl"></EnsureView>
+          <EnsureView name="debug" ViewFields="Edit, LinkTitle, c_cCCFDNavigationItemID, c_cCCFDNavigationItemName, c_cCCFDNavigationItemNameDE, c_cCCFDNavigationItemType, c_cCCFDNavigationItemLevel, c_cCCFDNavigationItemUrl, c_cCCFDNavigationDescription, c_cCCFDLUNavigationItemParent, c_cCCFDLUNavigationTenant, c_cCCFDLUNavigationTenantUrl, breLog"></EnsureView>
+          <EnsureView name="topNavigation"
+                      ViewFields="c_cCCFDNavigationItemID, c_cCCFDNavigationItemName, c_cCCFDNavigationItemUrl, c_cCCFDNavigationItemNameDE, c_cCCFDNavigationItemLevel, c_cCCFDLUNavigationItemParent, c_cCCFDNavigationDescription"
+                      sortFields="Created"
+                    >
+            <![CDATA[
+                      <Where>
+                        <Eq>
+                          <FieldRef Name="c_cCCFDNavigationItemType" />
+                          <Value Type="Choice">Above</Value>
+                        </Eq>
+                      </Where>
+                    ]]>
+          </EnsureView>
+          <EnsureView name="bellowNavigation"
+              ViewFields="c_cCCFDNavigationItemID, c_cCCFDNavigationItemName, c_cCCFDNavigationItemUrl, c_cCCFDNavigationItemNameDE, c_cCCFDNavigationItemLevel, c_cCCFDLUNavigationItemParent, c_cCCFDNavigationDescription"
+              sortFields="Created"
+                    >
+            <![CDATA[
+                      <Where>
+                        <Eq>
+                          <FieldRef Name="c_cCCFDNavigationItemType" />
+                          <Value Type="Choice">Bellow</Value>
+                        </Eq>
+                      </Where>
+                    ]]>
+          </EnsureView>
+          <EnsureItems keyFields="c_cCCFDNavigationItemID" mode="createOrUpdate" separator=";" quotedSeparator="\;">
+            <![CDATA[
+					    c_cCCFDNavigationItemID; c_cCCFDNavigationItemName; c_cCCFDNavigationItemNameDE; c_cCCFDNavigationItemUrl; c_cCCFDNavigationItemType; c_cCCFDNavigationItemLevel; c_cCCFDLUNavigationTenant; c_cCCFDNavigationDescription
+              1; Start Page; Startseite; ; Above; First; ; Start page of the top level navigation
+              2; Störunganname; Störunganname; ; Above; First; ; Start page of the top level navigation
+              3; Netzinformation; Netzinformation; ; Above; First; ; Start page of the top level navigation
+              4; Strom; Strom; ; Bellow; First; 1; Start page of the bellow level navigation
+              5; Gas; Gas; ; Bellow; First; 1; Start page of the top level navigation
+              6; Wasser; Wasser; ; Bellow; First; 1; Start page of the top level navigation
+              7; Freizeit; Freizeit; ; Bellow; First; 1; Start page of the top level navigation             
+              8; Stadtbus; Stadtbus; ; Bellow; First; 1; Start page of the bellow level navigation
+              9; Kommunikation; Kommunikation; ; Bellow; First; 1; Start page of the top level navigation
+              10; Energieeffizieneze; Energieeffizieneze; ; Bellow; First; 1; Start page of the top level navigation
+              11; Service; Service; ; Bellow; First; 1; Start page of the top level navigation                                                     
+              12; Unternehmen; Unternehmen; ; Bellow; First; 1; Start page of the top level navigation
+  			    ]]>
+          </EnsureItems>
+        </EnsureList>
+
+      </SetWebContext>
+
+    <!-- SETUP USER INTERFACE COMPONENTS-->
+
+      <SetWebContext url="{__SP_STARTWEB__}">
+
+        <!-- SETUP SITE ASSETS COMPONENTS-->
+
+        <!-- Site asset general structure -->
+
+        <EnsureList type="GenericList" name="SiteAssets" mode="UpdateOnly">
+          <EnsureFolder folderPath="/c_c" />
+          <EnsureFolder folderPath="/c_c/js" />
+          <EnsureFolder folderPath="/c_c/htmls" />
+          <EnsureFolder folderPath="/c_c/css" />
+          <EnsureFolder folderPath="/c_c/pics" />
+        </EnsureList>
+
+
+        <!-- SETUP START PAGE-->
+
+        <!-- Creating Empty Publishing Pages-->
+        <EnsureList type="DocumentLibrary" name="Pages" mode="UpdateOnly">
+
+          <EnsureItem mode="CreateOrUpdate" type="Document"
+          keyFields="FileLeafRef"
+          v_FileLeafRef="Start.aspx"
+          v_Title="Start"
+    >
+            <![CDATA[
+
+    <%@ Page Inherits="Microsoft.SharePoint.Publishing.TemplateRedirectionPage,Microsoft.SharePoint.Publishing,Version=15.0.0.0,Culture=neutral,PublicKeyToken=71e9bce111e9429c" %> <%@ Reference VirtualPath="~TemplatePageUrl" %> <%@ Reference VirtualPath="~masterurl/custom.master" %><%@ Register Tagprefix="SharePoint" Namespace="Microsoft.SharePoint.WebControls" Assembly="Microsoft.SharePoint, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c" %>
+    <html xmlns:mso="urn:schemas-microsoft-com:office:office" xmlns:msdt="uuid:C2F41010-65B3-11d1-A29F-00AA00C14882"><head>
+    <!--[if gte mso 9]><xml>
+    <mso:CustomDocumentProperties>
+    <mso:PublishingContact msdt:dt="string">12</mso:PublishingContact>
+    <mso:PublishingIsFurlPage msdt:dt="string">0</mso:PublishingIsFurlPage>
+    <mso:display_urn_x003a_schemas-microsoft-com_x003a_office_x003a_office_x0023_PublishingContact msdt:dt="string">Daniel</mso:display_urn_x003a_schemas-microsoft-com_x003a_office_x003a_office_x0023_PublishingContact>
+    <mso:PublishingContactPicture msdt:dt="string"></mso:PublishingContactPicture>
+    <mso:RobotsNoIndex msdt:dt="string">0</mso:RobotsNoIndex>
+    <mso:PublishingContactName msdt:dt="string"></mso:PublishingContactName>
+    <mso:ContentTypeId msdt:dt="string">0x010100C568DB52D9D0A14D9B2FDCC96666E9F2007948130EC3DB064584E219954237AF390064DEA0F50FC8C147B0B6EA0636C4A7D4008F02240D1435E5418015A8CA4398A88F</mso:ContentTypeId>
+    <mso:PublishingPageLayoutName msdt:dt="string">BlankWebPartPage.aspx</mso:PublishingPageLayoutName>
+    <mso:Comments msdt:dt="string"></mso:Comments>
+    <mso:PublishingContactEmail msdt:dt="string"></mso:PublishingContactEmail>
+    <mso:PublishingPageLayout msdt:dt="string">https://intranet.springfield-ag.de/_catalogs/masterpage/BlankWebPartPage.aspx, Blank Web Part page</mso:PublishingPageLayout>
+    </mso:CustomDocumentProperties>
+    </xml><![endif]-->
+    <title>test3</title></head>
+    
+            ]]>
+          </EnsureItem>
+        </EnsureList>
+
+
+        <SetPageContext name="Pages/Start.aspx" >
+
+          <!-- Init-->
+          <DeleteAllWebParts />
+
+          <!-- MyModules-->
+          <AssignWebPart
+            dentificationMethod="Automatic"
+            type="ListViewWebPart"
+            title="My Modules"
+            zoneId="Header"
+            zoneIndex="1"
+            rebindView="true"
+            list="c_cCCLIOrder"
+            view="dashboardMyActiveTraining"
+            p_ChromeType="BorderOnly"
+            />
+
+          <!-- MyTrainings-->
+          <AssignWebPart
+            dentificationMethod="Automatic"
+            type="XsltListViewWebPart"
+            title="My Trainings"
+            zoneId="Header"
+            zoneIndex="2"
+            rebindView="true"
+            list="c_cCCLIOrder"
+            view="dashboardMyActiveTraining"
+            p_ChromeType="BorderOnly"
+            />
+
+          <!-- Modules to be ordered-->
+          <AssignWebPart
+            dentificationMethod="Automatic"
+            type="XsltListViewWebPart"
+            title="Modules to be ordered"
+            zoneId="Header"
+            zoneIndex="3"
+            rebindView="true"
+            list="c_cCCLIOrder"
+            view="dashboardMyInWorkModule"
+            p_ChromeType="BorderOnly"
+            />
+
+          <!-- Trainings to be ordered-->
+          <AssignWebPart
+            dentificationMethod="Automatic"
+            type="XsltListViewWebPart"
+            title="Modules to be ordered"
+            zoneId="Header"
+            zoneIndex="4"
+            rebindView="true"
+            list="c_cCCLIOrder"
+            view="dashboardMyInWorkTraining"
+            p_ChromeType="BorderOnly"
+            />
+
+        </SetPageContext>
+
+      </SetWebContext>
+
+    
+    
+</BEEScript>
+
+
+
+
+
+

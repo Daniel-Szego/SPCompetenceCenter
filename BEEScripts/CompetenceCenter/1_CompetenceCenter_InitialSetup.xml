@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- Competence Center Worshop Module Install Script
+-->
+
+<!-- Naming convenstion
+  Factory : FT
+  Field : FD
+  Content type : CT
+  List: LI
+  Lookup : LU
+-->
+
+<!-- INITIAL SETUP COMPONENTS-->
+
+
+<BEEScript>
+  <SetWebContext url="{__SP_STARTWEB__}">
+
+
+    <ActivateSiteFeature featureId="f6924d362fa84f0bb16d06b7250180fa"
+    comment="PublishingSite (SharePoint Server Publishing Infrastructure)"
+    activate="true" />
+    
+  </SetWebContext>
+</BEEScript>
+

@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CompetenceCenter", "CompetenceCenter", "{92D22850-37DF-4D64-8AC3-542689F6097F}"
+	ProjectSection(SolutionItems) = preProject
+		BEEScripts\CompetenceCenter\0_CompetenceCenter_AllInOne.xml = BEEScripts\CompetenceCenter\0_CompetenceCenter_AllInOne.xml
+		BEEScripts\CompetenceCenter\1_CompetenceCenter_InitialSetup.xml = BEEScripts\CompetenceCenter\1_CompetenceCenter_InitialSetup.xml
+		BEEScripts\CompetenceCenter\2_CompetenceCenter_ListStructure.xml = BEEScripts\CompetenceCenter\2_CompetenceCenter_ListStructure.xml
+		BEEScripts\CompetenceCenter\3_CompetenceCenter_UserInterface.xml = BEEScripts\CompetenceCenter\3_CompetenceCenter_UserInterface.xml
+		BEEScripts\CompetenceCenter\4_CompetenceCenter_DemoModule.xml = BEEScripts\CompetenceCenter\4_CompetenceCenter_DemoModule.xml
+		BEEScripts\CompetenceCenter\5_CompetenceCenter_TicketModule.xml = BEEScripts\CompetenceCenter\5_CompetenceCenter_TicketModule.xml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DemoSites", "DemoSites", "{48CDCC09-9301-4C5C-A069-CBD73F9E24D0}"
+	ProjectSection(SolutionItems) = preProject
+		BEEScripts\Sites\BEE_Einsteigsseite_Demo-Umgebung_mitCollaborationManager.xml = BEEScripts\Sites\BEE_Einsteigsseite_Demo-Umgebung_mitCollaborationManager.xml
+		BEEScripts\Sites\BEE_Einsteigsseite_Demo-Umgebung_ohneCollaborationManager.xml = BEEScripts\Sites\BEE_Einsteigsseite_Demo-Umgebung_ohneCollaborationManager.xml
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

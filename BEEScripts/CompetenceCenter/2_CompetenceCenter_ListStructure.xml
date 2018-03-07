@@ -1,0 +1,812 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- Competence Center Ordering Module Install Script
+-->
+
+<!-- Naming convenstion
+  Competence Center : CC
+  Field : FD
+  Content type : CT
+  List: LIspe
+
+-->
+
+<!-- SETUP CONTENT -->
+
+<BEEScript>
+  <SetWebContext url="{__SP_STARTWEB__}">
+
+    <!-- GENERAL ELEMENTS -->
+
+    <!-- General Logging Field -->
+    <EnsureField name="breLog" title="BRE Log" type="Note" mode="CreateOrUpdate"></EnsureField>
+
+    <!-- CUSTOMER -->
+    
+      <!-- Customer Fields -->
+      <EnsureField name="c_cCCFDCustomerID" title_EN="Customer ID" title_DE="Kunden ID" type="Integer" group="c_c" mode="CreateOrUpdate"></EnsureField>
+      <EnsureField name="c_cCCFDCustomerName" title_EN="Customer Name" title_DE="Kundenname" type="Text" group="c_c" mode="CreateOrUpdate"></EnsureField>
+      <EnsureField name="c_cCCFDCustomerAddress" title_EN="Customer Address" title_DE="Kundenadresse" type="Text" group="c_c" mode="CreateOrUpdate"></EnsureField>
+      <EnsureField name="c_cCCFDCustomerDescription" title_EN="Descprition" title_DE="Beschreibung" type="Note" group="c_c" mode="CreateOrUpdate"></EnsureField>
+
+      <!-- Customer Content Type -->
+      <EnsureContentType mode="createOrUpdate" name="c_cCCCTCustomer" group="c_c" template_DE="Element" template_EN="Item">
+        <AssignField name="c_cCCFDCustomerID" hidden="False" />
+        <AssignField name="c_cCCFDCustomerName" required="true" hidden="False" />
+        <AssignField name="c_cCCFDCustomerDescription" hidden="False" />
+        <AssignField name="WorkAddress" />
+        <AssignField name="WorkZip" />
+        <AssignField name="WorkCity" />
+        <AssignField name="WorkCountry" />
+        <AssignField name="WorkFax" />
+        <AssignField name="WorkPhone" />
+        <AssignField name="EMail" />
+        <AssignField name="WebPage" />
+        <AssignField name="breLog" hidden="False" />
+      </EnsureContentType>
+
+      <!-- Customer list -->
+      <EnsureList type="GenericList" name="c_cCCLICustomer" title_EN="Customers" title_DE="Kunden" contentTypesEnabled="True" quickLaunchEnabled="False" p_EnableFolderCreation="true">
+        <AssignContentType name="c_cCCCTCustomer" position="1" />
+        <RemoveContentType name_DE="Element" name_EN="Item" />
+        <EnsureView name="[defaultView]" 
+                    ViewFields="Edit, LinkTitle, c_cCCFDCustomerID, c_cCCFDCustomerName, c_cCCFDCustomerDescription"
+                    showFolders="false"></EnsureView>
+        <EnsureView name="Detail" 
+                    ViewFields="Edit, LinkTitle, c_cCCFDCustomerID, c_cCCFDCustomerName, c_cCCFDCustomerDescription, WorkAddress, WorkZip, WorkCity, WorkCountry, WorkFax, WorkPhone, EMail"
+                    showFolders="false"></EnsureView>
+        <EnsureView name="debug" 
+                    ViewFields="Edit, LinkTitle, c_cCCFDCustomerID, c_cCCFDCustomerName, c_cCCFDCustomerDescription, breLog"
+                    showFolders="false"></EnsureView>
+      </EnsureList>
+
+    <!-- MEMBERS ( OF THE CUSTOMERS ) -->
+
+      <EnsureField name="c_cCCFDMemberType" title_EN="Member type" title_DE="Mitglied Typ" type="Choice" choices="basic user, power user, admin" group="c_c" mode="CreateOrUpdate"></EnsureField>
+
+      <!-- field lookup customer -->
+      <EnsureField name="c_cCCFDLUCustomer" type="Lookup" lookupField="c_cCCFDCustomerName" group="c_c" mode="createOrUpdate"
+        title_DE="Kunde" lookupList="c_cCCLICustomer"
+        title_EN="Customer" />
+
+      <EnsureContentType group="c_c" mode="createOrUpdate" name="c_cCCCTMember" updateChildren="true"
+        title_DE="Ansprechpartner" template_DE="Kontakt"
+        title_EN="Contact Person" template_EN="Contact">
+          <RemoveField name="CompanyPhonetic" />
+          <RemoveField name="HomePhone" />
+          <RemoveField name="WorkState" />
+          <RemoveField name="WebPage" />
+          <RemoveField name="Comments" />
+          <AssignField name="c_cCCFDLUCustomer" />
+          <AssignField name="breLog" hidden="False" />
+      </EnsureContentType>
+
+      <!-- Members list -->
+      <EnsureList type="GenericList" name="c_cCCLIMembers" title_EN="Members" title_DE="Mitglied" contentTypesEnabled="True" quickLaunchEnabled="False" p_EnableFolderCreation="true">
+        <AssignContentType name="c_cCCCTCustomer" position="1" />
+        <RemoveContentType name_DE="Element" name_EN="Item" />
+        <EnsureView name="[defaultView]"
+                    ViewFields="Edit, LinkTitle, LastNamePhonetic,FirstNamePhonetic, c_cCCFDCustomerName"
+                    showFolders="false"></EnsureView>
+        <EnsureView name="Detail"
+                    ViewFields="Edit, LinkTitle, LastNamePhonetic,FirstNamePhonetic, c_cCCFDCustomerName, WorkPhone, EMail, WorkCity, WorkCountry"
+                    showFolders="false"></EnsureView>
+        <EnsureView name="debug"
+                    ViewFields="Edit, LinkTitle, LastNamePhonetic,FirstNamePhonetic, c_cCCFDCustomerName, breLog"
+                    showFolders="false"></EnsureView>
+      </EnsureList>
+
+    <!-- CONTRACT -->
+    
+      <!-- Contract Fields -->
+      <EnsureField name="c_cCCFDContractID" title_EN="Contract ID" title_DE="Vertrag ID" type="Integer" group="c_c" mode="CreateOrUpdate"></EnsureField>
+      <EnsureField name="c_cCCFDContractName" title_EN="Contract Name" title_DE="Vertragsname" type="Text" group="c_c" mode="CreateOrUpdate"></EnsureField>
+      <EnsureField name="c_cCCFDContractType" title_EN="Contract Type" title_DE="Vertragtyp" type="Choice" group="c_c" mode="CreateOrUpdate"></EnsureField>
+      <EnsureField name="c_cCCFDContractDescription" title_EN="Descprition" title_DE="Beschreibung" type="Note" group="c_c" mode="CreateOrUpdate"></EnsureField>
+
+      <!-- Contract Content Type -->
+      <EnsureContentType mode="createOrUpdate" name="c_cCCCTContract" group="c_c" template="Document">
+        <AssignField name="c_cCCFDContractID" hidden="False" />
+        <AssignField name="c_cCCFDContractName" required="true" hidden="False" />
+        <AssignField name="c_cCCFDContractType" hidden="False" />
+        <AssignField name="c_cCCFDContractDescription" hidden="False" />
+        <AssignField name="c_cCCFDLUCustomer" hidden="False" />
+        <AssignField name="breLog" hidden="False" />
+      </EnsureContentType>
+
+      <!-- Contract list -->
+      <EnsureList type="DocumentLibrary" name="c_cCCLIContract" title_EN="Contract" title_DE="Verträge" contentTypesEnabled="True" quickLaunchEnabled="False" p_EnableFolderCreation="true">
+        <AssignContentType name="c_cCCCTContract" position="1" />
+        <RemoveContentType name_DE="Dokument" name_EN="Document" />
+        <EnsureView name="[defaultView]" 
+                    ViewFields="Edit, LinkTitle, c_cCCFDContractID, c_cCCFDContractName, c_cCCFDLUCustomer, c_cCCFDContractDescription"
+                    showFolders="false"></EnsureView>
+        <EnsureView name="debug" 
+                    ViewFields="Edit, LinkTitle, c_cCCFDContractID, c_cCCFDContractName, c_cCCFDLUCustomer, c_cCCFDContractDescription, breLog"
+                    showFolders="false"></EnsureView>
+        <EnsureView name="dashboard" 
+                    ViewFields="Edit, LinkTitle, c_cCCFDContractID, c_cCCFDContractName, c_cCCFDLUCustomer, c_cCCFDContractDescription"
+                    showFolders="false"
+                    p_RowLimit="5"></EnsureView>
+      </EnsureList>
+
+    <!-- SOLUTION STORE -->
+    
+      <!-- Solution Store Fields -->
+      <EnsureField name="c_cCCFDSolutionID" title_EN="Solution ID" title_DE="Lösung ID" type="Integer" group="c_c" mode="CreateOrUpdate"></EnsureField>
+      <EnsureField name="c_cCCFDSolutionName" title_EN="Solution Name" title_DE="Lösung Name" type="Text" group="c_c" mode="CreateOrUpdate"></EnsureField>
+      <EnsureField name="c_cCCFDSolutionType" title_EN="Solution Type" title_DE="Lösung Typ" type="Choice" choices="BEEScript, Feature, App, Manual" group="c_c" mode="CreateOrUpdate"></EnsureField>
+      <EnsureField name="c_cCCFDSolutionDescription" title_EN="Descprition" title_DE="Beschreibung" type="Note" group="c_c" mode="CreateOrUpdate"></EnsureField>
+
+      <!-- Solution Store Content Type -->
+      <EnsureContentType mode="createOrUpdate" name="c_cCCCTSolution" group="c_c" template_DE="Element" template_EN="Item">
+        <AssignField name="c_cCCFDSolutionID" hidden="False" />
+        <AssignField name="c_cCCFDSolutionName" required="true" hidden="False" />
+        <AssignField name="c_cCCFDSolutionDescription" hidden="False" />
+        <AssignField name="breLog" hidden="False" />
+      </EnsureContentType>
+
+      <!-- Solution list -->
+      <EnsureList type="GenericList" name="c_cCCLISolution" title_EN="Solution" title_DE="Lösungen" contentTypesEnabled="True" quickLaunchEnabled="False">
+        <AssignContentType name="c_cCCCTSolution" position="1" />
+        <RemoveContentType name_DE="Element" name_EN="Item" />
+        <EnsureView name="[defaultView]" ViewFields="Edit, LinkTitle, c_cCCFDSolutionID, c_cCCFDSolutionName, c_cCCFDSolutionDescription"></EnsureView>
+        <EnsureView name="debug" ViewFields="Edit, LinkTitle, c_cCCFDSolutionID, c_cCCFDSolutionName, c_cCCFDSolutionDescription, breLog"></EnsureView>
+      </EnsureList>
+
+    <!-- MODULES -->
+    
+      <!-- Modules Fields -->
+      <EnsureField name="c_cCCFDModuleID" title_EN="Module ID" title_DE="Module ID" group="c_c" type="Integer" mode="CreateOrUpdate"></EnsureField>
+      <EnsureField name="c_cCCFDModuleName" title_EN="Module Name" title_DE="Module Name" group="c_c" type="Text" mode="CreateOrUpdate"></EnsureField>
+      <EnsureField name="c_cCCFDModuleType" title_EN="Module Type" title_DE="Module Type" group="c_c" type="Choice" choices="StartUp, Module, Plugin, Extention" mode="CreateOrUpdate"></EnsureField> 
+      <EnsureField name="c_cCCFDModuleDescription" title_EN="Descprition" title_DE="Beschreibung" type="Note" group="c_c" mode="CreateOrUpdate"></EnsureField>
+      <EnsureField name="c_cCCFDModuleDemo" title_EN="Demo" title_DE="Demo" type="URL" group="c_c" mode="CreateOrUpdate"></EnsureField>
+
+    <!-- field lookup solution name -->
+      <EnsureField name="c_cCCFDLUSolution" type="Lookup" lookupField="c_cCCFDSolutionName" group="c_c" mode="createOrUpdate"
+			  title_DE="Lösung Name" lookupList="c_cCCLISolution"
+			  title_EN="Solution Name" />
+
+      <!-- Module Content Type -->
+      <EnsureContentType mode="createOrUpdate" name="c_cCCCTModule" group="c_c" template_DE="Element" template_EN="Item">
+        <AssignField name="c_cCCFDModuleID" hidden="False" />
+        <AssignField name="c_cCCFDModuleName" required="true" hidden="False" />
+        <AssignField name="c_cCCFDModuleType" hidden="False" />
+        <AssignField name="c_cCCFDModuleDescription" hidden="False" />
+        <AssignField name="c_cCCFDLUSolution" hidden="False" />
+        <AssignField name="breLog" hidden="False" />
+      </EnsureContentType>
+
+      <!-- Module list -->
+      <EnsureList type="GenericList" name="c_cCCLIModule" title_EN="Module" title_DE="Module" contentTypesEnabled="True" quickLaunchEnabled="False">
+        <AssignContentType name="c_cCCCTModule" position="1" />
+        <RemoveContentType name_DE="Element" name_EN="Item" />
+        <EnsureView name="[defaultView]" ViewFields="Edit, LinkTitle, c_cCCFDModuleID, c_cCCFDModuleName, c_cCCFDModuleType, c_cCCFDModuleDescription, c_cCCFDLUSolution"></EnsureView>
+        <EnsureView name="debug" ViewFields="Edit, LinkTitle, c_cCCFDModuleID, c_cCCFDModuleName, c_cCCFDModuleType, c_cCCFDModuleDescription, c_cCCFDLUSolution, breLog"></EnsureView>
+        <EnsureView name="dashboard" 
+                    ViewFields="Edit, LinkTitle, c_cCCFDModuleID, c_cCCFDModuleName, c_cCCFDModuleType, c_cCCFDModuleDescription, c_cCCFDLUSolution, breLog"
+                    sortFields="c_cCCFDModuleID"
+                    p_RowLimit="5"></EnsureView>
+
+        <If condition="{__LCID__} == 1031">
+            <EnsureItems keyFields="c_cCCFDModuleID" mode="createOrUpdate" separator=";" quotedSeparator="\;">
+            <![CDATA[
+					  c_cCCFDModuleID; c_cCCFDModuleName; c_cCCFDModuleType; c_cCCFDModuleDescription
+            1; StartUp; StartUp; Initiale Bereitstellung
+            2; Portal Module; Module; Standard Portal Module
+					  3; Vertrag Module; Module; Vertragsmanagement Module
+					  4; Qualität Module; Module; Qualitätsmanagement Module
+					  5; ISO Module; Module; ISO Module          
+				  ]]>
+            </EnsureItems>
+      </If>
+			<Else>
+        <EnsureItems keyFields="c_cCCFDModuleID" mode="createOrUpdate" separator=";" quotedSeparator="\;">
+          <![CDATA[
+					  c_cCCFDModuleID; c_cCCFDModuleName; c_cCCFDModuleType; c_cCCFDModuleDescription
+            1; StartUp; StartUp; Initial setup
+            2; Portal Module; Module; Standard Portal Module
+					  3; Contract Module; Module; Contract Management Module
+					  4; Quality Module; Module; Quality Managment Module
+					  5; ISO Module; Module; ISO Module          
+				  ]]>
+        </EnsureItems>
+      </Else>
+      </EnsureList>
+
+    <!-- TRAININGS -->
+
+      <!-- Training Fields -->
+      <EnsureField name="c_cCCFDTrainingID" title_EN="Training ID" title_DE="Schulung ID" group="c_c" type="Integer" mode="CreateOrUpdate"></EnsureField>
+      <EnsureField name="c_cCCFDTrainingName" title_EN="Training Name" title_DE="Schulung Name" group="c_c" type="Text" mode="CreateOrUpdate"></EnsureField>
+      <EnsureField name="c_cCCFDTrainingType" title_EN="Training Type" title_DE="Schulung Type" group="c_c" type="Choice" choices="online, vor Ort" mode="CreateOrUpdate"></EnsureField>
+      <EnsureField name="c_cCCFDTrainingLevel" title_EN="Training Level" title_DE="Schwiereigkeit Stufe" group="c_c" type="Choice" choices="Anfänger, IT Fachkraft" mode="CreateOrUpdate"></EnsureField>
+      <EnsureField name="c_cCCFDTrainingDescription" title_EN="Descprition" title_DE="Beschreibung" type="Note" group="c_c" mode="CreateOrUpdate"></EnsureField> 
+
+      <!-- Training Content Type -->
+      <EnsureContentType mode="createOrUpdate" name="c_cCCCTTraining" group="c_c" template_DE="Element" template_EN="Item">
+        <AssignField name="c_cCCFDTrainingID" hidden="False" />
+        <AssignField name="c_cCCFDTrainingName" required="true" hidden="False" />
+        <AssignField name="c_cCCFDTrainingType" hidden="False" />
+        <AssignField name="c_cCCFDTrainingLevel" hidden="False" />
+        <AssignField name="c_cCCFDTrainingDescription" hidden="False" />
+        <AssignField name="breLog" hidden="False" />
+      </EnsureContentType>
+
+      <!-- Training list -->
+      <EnsureList type="GenericList" name="c_cCCLITraining" title_EN="Training" title_DE="Schulung" contentTypesEnabled="True" quickLaunchEnabled="False">
+        <AssignContentType name="c_cCCCTTraining" position="1" />
+        <RemoveContentType name_DE="Element" name_EN="Item" />
+        <EnsureView name="[defaultView]" 
+                    ViewFields="Edit, LinkTitle, c_cCCFDTrainingID, c_cCCFDTrainingName, c_cCCFDModuleType, c_cCCFDTrainingType, c_cCCFDTrainingLevel, c_cCCFDTrainingDescription"
+                    ></EnsureView>
+        <EnsureView name="debug" 
+                    ViewFields="Edit, LinkTitle, c_cCCFDTrainingID, c_cCCFDTrainingName, c_cCCFDModuleType, c_cCCFDTrainingType, c_cCCFDTrainingLevel, c_cCCFDTrainingDescription, breLog"
+                    ></EnsureView>
+
+        <If condition="{__LCID__} == 1031">
+          <EnsureItems keyFields="c_cCCFDTrainingID" mode="createOrUpdate" separator=";" quotedSeparator="\;">
+            <![CDATA[
+					    c_cCCFDTrainingID; c_cCCFDTrainingName; c_cCCFDTrainingType; c_cCCFDTrainingLevel; c_cCCFDTrainingDescription
+              1; Anfänger Kurse; online; Anfänger; Anfänger Kurse für die Portal Lösung
+	            1; ISO Audit; online; Anfänger; ISO Audit
+           ]]>
+          </EnsureItems>
+        </If>
+        <Else>
+          <EnsureItems keyFields="c_cCCFDTrainingID" mode="createOrUpdate" separator=";" quotedSeparator="\;">
+            <![CDATA[
+					    c_cCCFDTrainingID; c_cCCFDTrainingName; c_cCCFDTrainingType; c_cCCFDTrainingLevel; c_cCCFDTrainingDescription
+              1; Anfänger Kurse; online; Anfänger; Anfänger Kurse für die Portal Lösung
+	            1; ISO Audit; online; Anfänger; ISO Audit
+				    ]]>
+          </EnsureItems>
+        </Else>
+      </EnsureList>
+
+    <!-- ORDER -->
+    
+      <!-- Order Fields -->
+      <EnsureField name="c_cCCFDOrderID" title_EN="Order ID" title_DE="Bestellung ID" type="Integer" group="c_c" mode="CreateOrUpdate"></EnsureField>
+      <EnsureField name="c_cCCFDOrderName" title_EN="Order Name" title_DE="Bestellung Name" group="c_c" type="Text" mode="CreateOrUpdate"></EnsureField>
+      <EnsureField name="c_cCCFDOrderType" title_EN="Order Type" title_DE="Bestellung Typ" group="c_c" type="Choice" choices="Module, Training" mode="CreateOrUpdate"></EnsureField>
+      <EnsureField name="c_cCCFDOrderState" title_EN="Order State" title_DE="Bestellung Status" group="c_c" type="Choice" choices="Init, InWork, Approved" mode="CreateOrUpdate"></EnsureField>
+      <EnsureField name="c_cCCFDOrderDescription" title_EN="Descprition" title_DE="Beschreibung" type="Note" group="c_c" mode="CreateOrUpdate"></EnsureField>
+
+      <!-- field lookup Module -->
+      <EnsureField name="c_cCCFDLUModule" type="Lookup" lookupField="c_cCCFDModuleName" group="c_c" mode="createOrUpdate"
+			  title_DE="Bestellbar Komponent" lookupList="c_cCCLIModule"
+			  title_EN="Module" />
+
+      <!-- field lookup Training -->
+      <EnsureField name="c_cCCFDLUTraining" type="Lookup" lookupField="c_cCCFDTrainingName" group="c_c" mode="createOrUpdate"
+        title_DE="Schulung" lookupList="c_cCCLITraining"
+        title_EN="Training" />
+
+      <!-- Order Content Type -->
+      <EnsureContentType mode="createOrUpdate" name="c_cCCCTOrderModule" group="c_c" template_DE="Element" template_EN="Item">
+        <AssignField name="c_cCCFDOrderID" hidden="False" />
+        <AssignField name="c_cCCFDOrderName" required="true" hidden="False" />
+        <AssignField name="c_cCCFDOrderType" hidden="False" />
+        <AssignField name="c_cCCFDOrderState" hidden="False" />
+        <AssignField name="c_cCCFDLUModule" hidden="False" />
+        <AssignField name="c_cCCFDOrderDescription" hidden="False" />
+        <AssignField name="breLog" hidden="False" />
+      </EnsureContentType>
+
+      <EnsureContentType mode="createOrUpdate" name="c_cCCCTOrderTraining" group="c_c" template_DE="Element" template_EN="Item">
+        <AssignField name="c_cCCFDOrderID" hidden="False" />
+        <AssignField name="c_cCCFDOrderName" required="true" hidden="False" />
+        <AssignField name="c_cCCFDOrderType" hidden="False" />
+        <AssignField name="c_cCCFDOrderState" hidden="False" />
+        <AssignField name="c_cCCFDLUTraining" hidden="False" />
+        <AssignField name="c_cCCFDOrderDescription" hidden="False" />
+        <AssignField name="breLog" hidden="False" />
+      </EnsureContentType>
+
+    <!-- Order list -->
+      <EnsureList type="GenericList" name="c_cCCLIOrder" title_EN="Order" title_DE="Bestellung" contentTypesEnabled="True" quickLaunchEnabled="False">
+        <AssignContentType name="c_cCCCTOrderModule" position="1" />
+        <AssignContentType name="c_cCCCTOrderTraining" position="2" />
+        <RemoveContentType name_DE="Element" name_EN="Item" />
+        <EnsureView name="[defaultView]" 
+                    ViewFields="Edit, LinkTitle, c_cCCFDOrderID, c_cCCFDOrderName, c_cCCFDOrderType, c_cCCFDOrderDescription"
+                    ></EnsureView>
+        <EnsureView name="debug" 
+                    ViewFields="Edit, LinkTitle, c_cCCFDOrderID, c_cCCFDOrderName, c_cCCFDOrderType, c_cCCFDOrderDescription, breLog"
+                    ></EnsureView>
+        <EnsureView name="dashboardMyActiveModule"
+                    ViewFields="c_cCCFDOrderID, c_cCCFDLUModule"
+                    p_RowLimit="5"
+                    sortFields="Created"
+                    >
+                    <![CDATA[
+                      <Where>
+                      <And>
+                        <Eq>
+                          <FieldRef Name="c_cCCFDOrderType" />
+                          <Value Type="Choice">Module</Value>
+                        </Eq>
+                        <Eq>
+                          <FieldRef Name="c_cCCFDOrderState" />
+                          <Value Type="Choice">Approved</Value>
+                        </Eq>
+                      </And>
+                      </Where>
+                    ]]>          
+        </EnsureView>
+        <EnsureView name="dashboardMyActiveTraining"
+                    ViewFields="c_cCCFDOrderID, c_cCCFDLUModule"
+                    p_RowLimit="5"
+                    sortFields="Created"
+                    >
+          <![CDATA[
+                      <Where>
+                      <And>
+                        <Eq>
+                          <FieldRef Name="c_cCCFDOrderType" />
+                          <Value Type="Choice">Module</Value>
+                        </Eq>
+                        <Eq>
+                          <FieldRef Name="c_cCCFDOrderState" />
+                          <Value Type="Choice">Approved</Value>
+                        </Eq>
+                      </And>
+                      </Where>
+                    ]]>
+        </EnsureView>
+        <EnsureView name="dashboardMyInWorkModule"
+                    ViewFields="c_cCCFDOrderID, c_cCCFDLUModule"
+                    p_RowLimit="5"
+                    sortFields="Created"
+                    >
+          <![CDATA[
+                      <Where>
+                      <And>
+                        <Eq>
+                          <FieldRef Name="c_cCCFDOrderType" />
+                          <Value Type="Choice">Training</Value>
+                        </Eq>
+                        <Eq>
+                          <FieldRef Name="c_cCCFDOrderState" />
+                          <Value Type="Choice">InWork</Value>
+                        </Eq>
+                      </And>
+                      </Where>
+                    ]]>
+        </EnsureView>
+        <EnsureView name="dashboardMyInWorkTraining"
+                    ViewFields="c_cCCFDOrderID, c_cCCFDLUModule"
+                    p_RowLimit="5"
+                    sortFields="Created"
+                    >
+          <![CDATA[
+                      <Where>
+                      <And>
+                        <Eq>
+                          <FieldRef Name="c_cCCFDOrderType" />
+                          <Value Type="Choice">Training</Value>
+                        </Eq>
+                        <Eq>
+                          <FieldRef Name="c_cCCFDOrderState" />
+                          <Value Type="Choice">InWork</Value>
+                        </Eq>
+                      </And>
+                      </Where>
+                    ]]>
+        </EnsureView>
+      </EnsureList>
+
+    <!-- TASK-->
+
+    <!-- Order Content Type -->
+    <EnsureContentType mode="createOrUpdate" name="c_cCCCTTaskOrderComponent" group="c_c" template="Task">
+      <AssignField name="c_cCCFDLUModule" hidden="False" />
+      <AssignField name="c_cCCFDLUCustomer" hidden="False" />
+      <AssignField name="breLog" hidden="False" />
+    </EnsureContentType>
+
+    <!-- Task list -->
+    <EnsureList type="Tasks" name="c_cCCLITasks" title_EN="Tasks" title_DE="Aufgaben" contentTypesEnabled="True" quickLaunchEnabled="False">
+      <AssignContentType name="c_cCCCTTaskOrderComponent" position="1" />
+      <RemoveContentType name_DE="Aufgabe" name_EN="Task" />
+    </EnsureList>
+
+
+    <!-- TECHNIQUAL LISTS -->
+
+     <!-- Tenant Fields -->
+       <EnsureField name="c_cCCFDTenantID" title_EN="Tenant ID" title_DE="Tenant ID" type="Integer" group="c_c" mode="CreateOrUpdate"></EnsureField>
+       <EnsureField name="c_cCCFDTenantName" title_EN="Tenant Name" title_DE="Tenant Name" group="c_c" type="Text" mode="CreateOrUpdate"></EnsureField>
+       <EnsureField name="c_cCCFDTenantUrl" title_EN="Tenant Url" title_DE="Tenant URL" type="URL" group="c_c" mode="CreateOrUpdate"></EnsureField>
+       <EnsureField name="c_cCCFDTenantDescription" title_EN="Description" title_DE="Beschreibung" type="Note" group="c_c" mode="CreateOrUpdate"></EnsureField>
+
+     <!-- Tenant Content Type -->
+      <EnsureContentType mode="createOrUpdate" name="c_cCCCTTenant" group="c_c" template_DE="Element" template_EN="Item">
+        <AssignField name="c_cCCFDTenantID" required="true" hidden="False" />
+        <AssignField name="c_cCCFDTenantName" required="true" hidden="False" />
+        <AssignField name="c_cCCFDTenantUrl" hidden="False" />
+        <AssignField name="c_cCCFDTenantDescription" hidden="False" />
+        <AssignField name="breLog" hidden="False" />
+      </EnsureContentType>
+
+    <!-- Tenant List -->
+      <EnsureList type="GenericList" name="c_cCCLITenant" title_EN="Tenant" title_DE="Tenant" contentTypesEnabled="True" quickLaunchEnabled="False">
+        <AssignContentType name="c_cCCCTTenant" position="1" />
+        <RemoveContentType name_DE="Element" name_EN="Item" />
+        <EnsureView name="[defaultView]" ViewFields="Edit, LinkTitle, c_cCCFDTenantID, c_cCCFDTenantName, c_cCCFDTenantUrl, c_cCCFDTenantDescription"></EnsureView>
+        <EnsureView name="debug" ViewFields="Edit, LinkTitle, c_cCCFDTenantID, c_cCCFDTenantName, c_cCCFDTenantUrl, c_cCCFDTenantDescription, breLog"></EnsureView>
+        <EnsureItems keyFields="c_cCCFDTenantID" mode="createOrUpdate" separator=";" quotedSeparator="\;">
+          <![CDATA[
+					    c_cCCFDTenantID; c_cCCFDTenantName; c_cCCFDTenantUrl; c_cCCFDTenantDescription
+              1; Competence; ;Navigation for the competence center
+              2; Demo; ;Demo Tenant nomber 1
+              3; Demo; ;Demo Tenant nomber 2
+              4; TKLI; ;TKLindau Tenant
+              
+				    ]]>
+        </EnsureItems>
+      </EnsureList>
+
+    <!-- Navigation List -->
+
+    <!-- Navigation Fields -->
+      <EnsureField name="c_cCCFDNavigationItemID" title_EN="Navigation Item ID" title_DE="Navigation Elemente ID" type="Integer" group="c_c" mode="CreateOrUpdate"></EnsureField>
+      <EnsureField name="c_cCCFDNavigationItemName" title_EN="Navigation Item Name" title_DE="Navigation Elemente Name" group="c_c" type="Text" mode="CreateOrUpdate"></EnsureField>
+      <EnsureField name="c_cCCFDNavigationItemNameDE" title_EN="Navigation Item Name DE" title_DE="Navigation Elemente Name DE" group="c_c" type="Text" mode="CreateOrUpdate"></EnsureField>
+      <EnsureField name="c_cCCFDNavigationItemUrl" title_EN="Navigation Item URL" title_DE="Navigation Elemente URL" group="c_c" type="Text" mode="CreateOrUpdate"></EnsureField>
+      <EnsureField name="c_cCCFDNavigationItemType" title_EN="Navigation Item Type" title_DE="Navigation Elemente Typ" group="c_c" type="Choice" choices="Above, Bellow" mode="CreateOrUpdate"></EnsureField>
+      <EnsureField name="c_cCCFDNavigationItemLevel" title_EN="Navigation Item Level" title_DE="Navigation Elemente Stufe" group="c_c" type="Choice" choices="First, Second, Third" mode="CreateOrUpdate"></EnsureField>
+      <EnsureField name="c_cCCFDNavigationDescription" title_EN="Descprition" title_DE="Beschreibung" type="Note" group="c_c" mode="CreateOrUpdate"></EnsureField>
+
+      <!-- Navigation Content Type -->
+      <EnsureContentType mode="createOrUpdate" name="c_cCCCTNavigation" group="c_c" template_DE="Element" template_EN="Item">
+        <AssignField name="c_cCCFDNavigationItemID" required="true" hidden="False" />
+        <AssignField name="c_cCCFDNavigationItemName" required="true" hidden="False" />
+        <AssignField name="c_cCCFDNavigationItemNameDE" hidden="False" />
+        <AssignField name="c_cCCFDNavigationItemUrl" hidden="False" />
+        <AssignField name="c_cCCFDNavigationItemType" hidden="False" />
+        <AssignField name="c_cCCFDNavigationItemLevel" hidden="False" />
+        <AssignField name="c_cCCFDNavigationDescription" hidden="False" />
+        <AssignField name="breLog" hidden="False" />
+      </EnsureContentType>
+
+      <!-- Navigation list -->
+      <EnsureList type="GenericList" name="c_cCCLINavigation" title_EN="Navigation" title_DE="Navigation" contentTypesEnabled="True" quickLaunchEnabled="False">
+        <AssignContentType name="c_cCCCTNavigation" position="1" />
+        <RemoveContentType name_DE="Element" name_EN="Item" />
+      </EnsureList>
+
+      <!-- field lookup Parent -->
+      <EnsureField name="c_cCCFDLUNavigationItemParent" type="Lookup" lookupField="c_cCCFDNavigationItemName" group="c_c" mode="createOrUpdate"
+        title_DE="Navigation Elemente Vorfahr" lookupList="c_cCCLINavigation"
+        title_EN="Navigation Item Parent" />
+
+      <!-- field lookup Tenant -->
+      <EnsureField name="c_cCCFDLUNavigationTenant" type="Lookup" lookupField="c_cCCFDTenantName" group="c_c" mode="createOrUpdate"
+        title_DE="Navigation Tenant" lookupList="c_cCCLITenant"
+        title_EN="Navigation Tenant" />
+
+      <!-- field lookup Tenant -->
+      <EnsureField name="c_cCCFDLUNavigationTenantUrl" type="Lookup" lookupField="c_cCCFDTenantUrl" group="c_c" mode="createOrUpdate"
+        title_DE="Navigation Tenant Url" lookupList="c_cCCLITenant"
+        title_EN="Navigation Tenant Url" />
+
+
+      <!-- Aktualisierung des Geschäftspartner-Inhaltstyps bzgl. Lookup -->
+      <SetContentTypeContext name="c_cCCCTNavigation">
+        <AssignField name="c_cCCFDLUNavigationItemParent" updateChildren="true" />
+        <AssignField name="c_cCCFDLUNavigationTenant" updateChildren="true" />
+        <AssignField name="c_cCCFDLUNavigationTenantUrl" updateChildren="true" />
+      </SetContentTypeContext>
+
+      <EnsureList type="GenericList" name="c_cCCLINavigation" title_EN="Navigation" title_DE="Navigation" contentTypesEnabled="True" quickLaunchEnabled="False">
+        <AssignContentType name="c_cCCCTNavigation" position="1" />
+        <RemoveContentType name_DE="Element" name_EN="Item" />
+        <EnsureView name="[defaultView]" ViewFields="Edit, LinkTitle, c_cCCFDNavigationItemID, c_cCCFDNavigationItemName, c_cCCFDNavigationItemNameDE, c_cCCFDNavigationItemType, c_cCCFDNavigationItemLevel, c_cCCFDNavigationItemUrl, c_cCCFDNavigationDescription, c_cCCFDLUNavigationItemParent, c_cCCFDLUNavigationTenant, c_cCCFDLUNavigationTenantUrl"></EnsureView>
+        <EnsureView name="debug" ViewFields="Edit, LinkTitle, c_cCCFDNavigationItemID, c_cCCFDNavigationItemName, c_cCCFDNavigationItemNameDE, c_cCCFDNavigationItemType, c_cCCFDNavigationItemLevel, c_cCCFDNavigationItemUrl, c_cCCFDNavigationDescription, c_cCCFDLUNavigationItemParent, c_cCCFDLUNavigationTenant, c_cCCFDLUNavigationTenantUrl, breLog"></EnsureView>
+        <EnsureView name="topNavigation"
+                    ViewFields="c_cCCFDNavigationItemID, c_cCCFDNavigationItemName, c_cCCFDNavigationItemUrl, c_cCCFDNavigationItemNameDE, c_cCCFDNavigationItemLevel, c_cCCFDLUNavigationItemParent, c_cCCFDNavigationDescription"
+                    sortFields="Created"
+                    >
+          <![CDATA[
+                      <Where>
+                        <Eq>
+                          <FieldRef Name="c_cCCFDNavigationItemType" />
+                          <Value Type="Choice">Above</Value>
+                        </Eq>
+                      </Where>
+                    ]]>
+        </EnsureView>
+        <EnsureView name="bellowNavigation"
+            ViewFields="c_cCCFDNavigationItemID, c_cCCFDNavigationItemName, c_cCCFDNavigationItemUrl, c_cCCFDNavigationItemNameDE, c_cCCFDNavigationItemLevel, c_cCCFDLUNavigationItemParent, c_cCCFDNavigationDescription"
+            sortFields="Created"
+                    >
+          <![CDATA[
+                      <Where>
+                        <Eq>
+                          <FieldRef Name="c_cCCFDNavigationItemType" />
+                          <Value Type="Choice">Bellow</Value>
+                        </Eq>
+                      </Where>
+                    ]]>
+        </EnsureView>
+        <EnsureItems keyFields="c_cCCFDNavigationItemID" mode="createOrUpdate" separator=";" quotedSeparator="\;">
+          <![CDATA[
+					    c_cCCFDNavigationItemID; c_cCCFDNavigationItemName; c_cCCFDNavigationItemNameDE; c_cCCFDNavigationItemUrl; c_cCCFDNavigationItemType; c_cCCFDNavigationItemLevel; c_cCCFDLUNavigationTenant; c_cCCFDNavigationDescription
+              1; Start Page; Startseite; ; Above; First; ; Start page of the top level navigation
+              2; Störunganname; Störunganname; ; Above; First; ; Start page of the top level navigation
+              3; Netzinformation; Netzinformation; ; Above; First; ; Start page of the top level navigation
+              4; Strom; Strom; ; Bellow; First; 1; Start page of the bellow level navigation
+              5; Gas; Gas; ; Bellow; First; 1; Start page of the top level navigation
+              6; Wasser; Wasser; ; Bellow; First; 1; Start page of the top level navigation
+              7; Freizeit; Freizeit; ; Bellow; First; 1; Start page of the top level navigation             
+              8; Stadtbus; Stadtbus; ; Bellow; First; 1; Start page of the bellow level navigation
+              9; Kommunikation; Kommunikation; ; Bellow; First; 1; Start page of the top level navigation
+              10; Energieeffizieneze; Energieeffizieneze; ; Bellow; First; 1; Start page of the top level navigation
+              11; Service; Service; ; Bellow; First; 1; Start page of the top level navigation                                                     
+              12; Unternehmen; Unternehmen; ; Bellow; First; 1; Start page of the top level navigation
+  			    ]]>
+        </EnsureItems>
+      </EnsureList>
+
+  </SetWebContext>
+
+</BEEScript>
+
+<!-- SETUP USER INTERFACE COMPONENTS-->
+
+  <BEEScript>
+    <SetWebContext url="{__SP_STARTWEB__}">
+      
+      <!-- SETUP SITE ASSETS COMPONENTS-->
+
+        <!-- Site asset general structure -->
+
+        <EnsureList type="GenericList" name="SiteAssets" mode="UpdateOnly">
+          <EnsureFolder folderPath="/c_c" />
+          <EnsureFolder folderPath="/c_c/js" />
+          <EnsureFolder folderPath="/c_c/htmls" />
+          <EnsureFolder folderPath="/c_c/css" />
+          <EnsureFolder folderPath="/c_c/pics" />
+        </EnsureList>
+
+      
+      
+     
+    </SetWebContext>
+  </BEEScript>
+
+<!-- FURTHER TESTIG CONTENTS -->
+
+<BEEScript>
+
+<!-- SETUP PAGES -->
+  <SetWebContext url="{__SP_ROOTWEB__}">    
+    
+    <EnsureList type="Library" name="SitePages" mode="CreateOrRebuild">
+
+      <EnsureItem mode="CreateOrUpdate"
+      keyFields="FileLeafRef"
+      v_FileLeafRef="Document 3.txt"
+      v_Title="My Title"
+>
+        <![CDATA[
+Hier der Inhalt der TextDatei.
+Natürlich sind hier auch Umlaute (ä, ö, ü, ß) und Variablen erlaubt,
+wie z. B. der Dateiname 
+]]>
+      </EnsureItem>
+
+      
+      <EnsureItem keyFields="FileLeafRef"
+      file="D:\work\installguide.pdf"
+      v_Title="TestDocument" />
+    </EnsureList>
+  </SetWebContext>
+
+</BEEScript>
+
+
+
+<BEEScript>
+
+  <!-- SETUP PAGES -->
+  <SetWebContext url="{__SP_STARTWEB__}">
+
+    <EnsureList type="DocumentLibrary" name="SitePages" mode="UpdateOnly">
+
+      <EnsureItem mode="CreateOrUpdate" type="Document"
+      keyFields="FileLeafRef"
+      v_FileLeafRef="Document 3.txt"
+      v_Title="My Title"
+>
+        <![CDATA[
+Hier der Inhalt der TextDatei.
+Natürlich sind hier auch Umlaute (ä, ö, ü, ß) und Variablen erlaubt,
+wie z. B. der Dateiname 
+]]>
+      </EnsureItem>
+    </EnsureList>
+  </SetWebContext>
+
+</BEEScript>
+
+
+<BEEScript>
+
+  <!-- SETUP PAGES -->
+  <SetWebContext url="{__SP_STARTWEB__}">
+    <EnsurePage>
+      
+      
+    </EnsurePage>
+  </SetWebContext>
+
+</BEEScript>
+
+
+<BEEScript>
+
+  <!-- SETUP PAGES -->
+  <SetWebContext url="{__SP_STARTWEB__}">
+
+    <EnsureList type="DocumentLibrary" name="SitePages" mode="UpdateOnly">
+
+      <EnsureItem mode="CreateOrUpdate" type="Document"
+      keyFields="FileLeafRef"
+      v_FileLeafRef="test2.aspx"
+      v_Title="test2"
+>
+        <![CDATA[
+
+
+<%-- _lcid="1033" _version="15.0.4420" _dal="1" --%>
+<%-- _LocalBinding --%>
+<%@ Page language="C#" MasterPageFile="~masterurl/default.master"    Inherits="Microsoft.SharePoint.WebPartPages.WebPartPage,Microsoft.SharePoint,Version=15.0.0.0,Culture=neutral,PublicKeyToken=71e9bce111e9429c"  %> <%@ Register Tagprefix="SharePoint" Namespace="Microsoft.SharePoint.WebControls" Assembly="Microsoft.SharePoint, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c" %> <%@ Register Tagprefix="Utilities" Namespace="Microsoft.SharePoint.Utilities" Assembly="Microsoft.SharePoint, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c" %> <%@ Import Namespace="Microsoft.SharePoint" %> <%@ Assembly Name="Microsoft.Web.CommandUI, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c" %> <%@ Register Tagprefix="WebPartPages" Namespace="Microsoft.SharePoint.WebPartPages" Assembly="Microsoft.SharePoint, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c" %>
+<asp:Content ContentPlaceHolderId="PlaceHolderPageTitle" runat="server">
+	<SharePoint:ListItemProperty Property="BaseName" maxlength="40" runat="server" __designer:Preview="test" __designer:Values="&lt;P N=&#39;Property&#39; T=&#39;BaseName&#39; /&gt;&lt;P N=&#39;MaxLength&#39; T=&#39;40&#39; /&gt;&lt;P N=&#39;InDesign&#39; T=&#39;False&#39; /&gt;&lt;P N=&#39;ID&#39; ID=&#39;1&#39; T=&#39;ctl00&#39; /&gt;&lt;P N=&#39;Page&#39; ID=&#39;2&#39; /&gt;&lt;P N=&#39;TemplateControl&#39; R=&#39;2&#39; /&gt;&lt;P N=&#39;AppRelativeTemplateSourceDirectory&#39; R=&#39;-1&#39; /&gt;"/>
+</asp:Content>
+<asp:Content ContentPlaceHolderId="PlaceHolderAdditionalPageHead" runat="server">
+	<meta name="GENERATOR" content="Microsoft SharePoint" />
+	<meta name="ProgId" content="SharePoint.WebPartPage.Document" />
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta name="CollaborationServer" content="SharePoint Team Web Site" />
+	<SharePoint:ScriptBlock runat="server" __designer:Preview="&lt;script type=&quot;text/javascript&quot;&gt;// &lt;![CDATA[ 
+
+
+	var navBarHelpOverrideKey = &quot;WSSEndUser&quot;;
+	// ]]&gt;
+&lt;/script&gt;" __designer:Values="&lt;P N=&#39;ID&#39; ID=&#39;1&#39; T=&#39;ctl01&#39; /&gt;&lt;P N=&#39;Page&#39; ID=&#39;2&#39; /&gt;&lt;P N=&#39;TemplateControl&#39; R=&#39;2&#39; /&gt;&lt;P N=&#39;AppRelativeTemplateSourceDirectory&#39; R=&#39;-1&#39; /&gt;">
+	var navBarHelpOverrideKey = "WSSEndUser";
+	</SharePoint:ScriptBlock>
+<SharePoint:StyleBlock runat="server" __designer:Preview="&lt;style type=&quot;text/css&quot;&gt;
+body #s4-leftpanel {
+	display:none;
+}
+.s4-ca {
+	margin-left:0px;
+}
+&lt;/style&gt;" __designer:Values="&lt;P N=&#39;ID&#39; ID=&#39;1&#39; T=&#39;ctl02&#39; /&gt;&lt;P N=&#39;Page&#39; ID=&#39;2&#39; /&gt;&lt;P N=&#39;TemplateControl&#39; R=&#39;2&#39; /&gt;&lt;P N=&#39;AppRelativeTemplateSourceDirectory&#39; R=&#39;-1&#39; /&gt;">
+body #s4-leftpanel {
+	display:none;
+}
+.s4-ca {
+	margin-left:0px;
+}
+</SharePoint:StyleBlock>
+</asp:Content>
+<asp:Content ContentPlaceHolderId="PlaceHolderSearchArea" runat="server">
+	<SharePoint:DelegateControl runat="server"
+		ControlId="SmallSearchInputBox" __designer:Preview="&lt;div class=&quot;ms-webpart-chrome ms-webpart-chrome-fullWidth &quot;&gt;
+	&lt;div WebPartID=&quot;00000000-0000-0000-0000-000000000000&quot; HasPers=&quot;true&quot; id=&quot;WebPart&quot; width=&quot;100%&quot; class=&quot;ms-WPBody noindex &quot; OnlyForMePart=&quot;true&quot; allowDelete=&quot;false&quot; style=&quot;&quot; &gt;&lt;div componentid=&quot;SmallSearchInputBox1_csr&quot; id=&quot;SmallSearchInputBox1_csr&quot;&gt;&lt;div id=&quot;SearchBox&quot; name=&quot;Control&quot;&gt;&lt;div class=&quot;ms-srch-sb ms-srch-sb-border&quot; id=&quot;SmallSearchInputBox1_csr_sboxdiv&quot;&gt;&lt;input type=&quot;text&quot; value=&quot;Search...&quot; maxlength=&quot;2048&quot; accessKey=&quot;S&quot; title=&quot;Search...&quot; id=&quot;SmallSearchInputBox1_csr_sbox&quot; autocomplete=&quot;off&quot; autocorrect=&quot;off&quot; onkeypress=&quot;EnsureScriptFunc(&#39;Search.ClientControls.js&#39;, &#39;Srch.U&#39;, function() {if (Srch.U.isEnterKey(String.fromCharCode(event.keyCode))) {$find(&#39;SmallSearchInputBox1_csr&#39;).search($get(&#39;SmallSearchInputBox1_csr_sbox&#39;).value);return Srch.U.cancelEvent(event);}})&quot; onkeydown=&quot;EnsureScriptFunc(&#39;Search.ClientControls.js&#39;, &#39;Srch.U&#39;, function() {var ctl = $find(&#39;SmallSearchInputBox1_csr&#39;);ctl.activateDefaultQuerySuggestionBehavior();})&quot; onfocus=&quot;EnsureScriptFunc(&#39;Search.ClientControls.js&#39;, &#39;Srch.U&#39;, function() {var ctl = $find(&#39;SmallSearchInputBox1_csr&#39;);ctl.hidePrompt();ctl.setBorder(true);})&quot; onblur=&quot;EnsureScriptFunc(&#39;Search.ClientControls.js&#39;, &#39;Srch.U&#39;, function() {var ctl = $find(&#39;SmallSearchInputBox1_csr&#39;); if (ctl){ ctl.showPrompt(); ctl.setBorder(false);}})&quot; class=&quot;ms-textSmall ms-srch-sb-prompt ms-helperText&quot;/&gt;&lt;a title=&quot;Search&quot; class=&quot;ms-srch-sb-searchLink&quot; id=&quot;SmallSearchInputBox1_csr_SearchLink&quot; onclick=&quot;EnsureScriptFunc(&#39;Search.ClientControls.js&#39;, &#39;Srch.U&#39;, function() {$find(&#39;SmallSearchInputBox1_csr&#39;).search($get(&#39;SmallSearchInputBox1_csr_sbox&#39;).value);})&quot; href=&quot;javascript: {}&quot; &gt;&lt;img src=&quot;/_layouts/15/images/searchresultui.png?rev=23&quot; class=&quot;ms-srch-sb-searchImg&quot; id=&quot;searchImg&quot; alt=&quot;Search&quot; /&gt;&lt;/a&gt;&lt;div class=&quot;ms-qSuggest-container ms-shadow&quot; id=&quot;AutoCompContainer&quot;&gt;&lt;div id=&quot;SmallSearchInputBox1_csr_AutoCompList&quot;&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;noscript&gt;&lt;div id=&quot;SmallSearchInputBox1_noscript&quot;&gt;It looks like your browser does not have JavaScript enabled. Please turn on JavaScript and try again.&lt;/div&gt;&lt;/noscript&gt;&lt;div id=&quot;SmallSearchInputBox1&quot;&gt;
+
+	&lt;/div&gt;&lt;div class=&quot;ms-clear&quot;&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;/div&gt;" __designer:Values="&lt;P N=&#39;ControlId&#39; T=&#39;SmallSearchInputBox&#39; /&gt;&lt;P N=&#39;ID&#39; ID=&#39;1&#39; T=&#39;ctl03&#39; /&gt;&lt;P N=&#39;Page&#39; ID=&#39;2&#39; /&gt;&lt;P N=&#39;TemplateControl&#39; R=&#39;2&#39; /&gt;&lt;P N=&#39;AppRelativeTemplateSourceDirectory&#39; R=&#39;-1&#39; /&gt;"/>
+</asp:Content>
+<asp:Content ContentPlaceHolderId="PlaceHolderPageDescription" runat="server">
+	<SharePoint:ProjectProperty Property="Description" runat="server" __designer:Preview="" __designer:Values="&lt;P N=&#39;Property&#39; T=&#39;Description&#39; /&gt;&lt;P N=&#39;InDesign&#39; T=&#39;False&#39; /&gt;&lt;P N=&#39;ID&#39; ID=&#39;1&#39; T=&#39;ctl04&#39; /&gt;&lt;P N=&#39;Page&#39; ID=&#39;2&#39; /&gt;&lt;P N=&#39;TemplateControl&#39; R=&#39;2&#39; /&gt;&lt;P N=&#39;AppRelativeTemplateSourceDirectory&#39; R=&#39;-1&#39; /&gt;"/>
+</asp:Content>
+<asp:Content ContentPlaceHolderId="PlaceHolderMain" runat="server">
+  <div class="ms-hide">
+	<WebPartPages:WebPartZone runat="server" title="loc:TitleBar" id="TitleBar" AllowLayoutChange="false" AllowPersonalization="false" Style="display:none;" __designer:Preview="&lt;Regions&gt;&lt;Region Name=&quot;0&quot; Editable=&quot;True&quot; Content=&quot;&quot; NamingContainer=&quot;True&quot; /&gt;&lt;/Regions&gt;&lt;table cellspacing=&quot;0&quot; cellpadding=&quot;0&quot; border=&quot;0&quot; id=&quot;TitleBar&quot; style=&quot;display:none;&quot;&gt;
+	&lt;tr&gt;
+		&lt;td style=&quot;white-space:nowrap;&quot;&gt;&lt;table cellspacing=&quot;0&quot; cellpadding=&quot;2&quot; border=&quot;0&quot; style=&quot;width:100%;&quot;&gt;
+			&lt;tr&gt;
+				&lt;td style=&quot;white-space:nowrap;&quot;&gt;Title Bar&lt;/td&gt;
+			&lt;/tr&gt;
+		&lt;/table&gt;&lt;/td&gt;
+	&lt;/tr&gt;&lt;tr&gt;
+		&lt;td style=&quot;height:100%;&quot;&gt;&lt;table cellspacing=&quot;0&quot; cellpadding=&quot;2&quot; border=&quot;0&quot; style=&quot;border-color:Gray;border-width:1px;border-style:Solid;width:100%;height:100%;&quot;&gt;
+			&lt;tr valign=&quot;top&quot;&gt;
+				&lt;td _designerRegion=&quot;0&quot;&gt;&lt;table cellspacing=&quot;0&quot; cellpadding=&quot;2&quot; border=&quot;0&quot; style=&quot;width:100%;&quot;&gt;
+					&lt;tr&gt;
+						&lt;td style=&quot;height:100%;&quot;&gt;&lt;/td&gt;
+					&lt;/tr&gt;
+				&lt;/table&gt;&lt;/td&gt;
+			&lt;/tr&gt;
+		&lt;/table&gt;&lt;/td&gt;
+	&lt;/tr&gt;
+&lt;/table&gt;" __designer:Values="&lt;P N=&#39;ID&#39; ID=&#39;1&#39; T=&#39;TitleBar&#39; /&gt;&lt;P N=&#39;AllowPersonalization&#39; T=&#39;False&#39; /&gt;&lt;P N=&#39;HeaderText&#39; T=&#39;loc:TitleBar&#39; /&gt;&lt;P N=&#39;DisplayTitle&#39; ID=&#39;2&#39; T=&#39;Title Bar&#39; /&gt;&lt;P N=&#39;AllowLayoutChange&#39; T=&#39;False&#39; /&gt;&lt;P N=&#39;Title&#39; R=&#39;2&#39; /&gt;&lt;P N=&#39;LockLayout&#39; T=&#39;True&#39; /&gt;&lt;P N=&#39;HasAttributes&#39; T=&#39;True&#39; /&gt;&lt;P N=&#39;Page&#39; ID=&#39;3&#39; /&gt;&lt;P N=&#39;TemplateControl&#39; R=&#39;3&#39; /&gt;&lt;P N=&#39;AppRelativeTemplateSourceDirectory&#39; R=&#39;-1&#39; /&gt;" __designer:Templates="&lt;Group Name=&quot;ZoneTemplate&quot;&gt;&lt;Template Name=&quot;ZoneTemplate&quot; Content=&quot;&quot; /&gt;&lt;/Group&gt;"><ZoneTemplate><WebPartPages:TitleBarWebPart runat="server" HeaderTitle="test" Title="Web Part Page Title Bar" FrameType="None" SuppressWebPartChrome="False" Description="" IsIncluded="True" ZoneID="TitleBar" PartOrder="1" FrameState="Normal" AllowRemove="False" AllowZoneChange="True" AllowMinimize="False" AllowConnect="True" AllowEdit="True" AllowHide="True" IsVisible="True" DetailLink="" HelpLink="" HelpMode="Modeless" Dir="Default" PartImageSmall="" MissingAssembly="Cannot import this Web Part." PartImageLarge="" IsIncludedFilter="" ExportControlledProperties="True" ConnectionID="00000000-0000-0000-0000-000000000000" ID="g_78adb5f0_8a94_4fbb_b9f5_b5f2dc57f6c9" AllowClose="False" ChromeType="None" ExportMode="All" __designer:Values="&lt;P N=&#39;HeaderTitle&#39; T=&#39;test&#39; /&gt;&lt;P N=&#39;ZoneID&#39; T=&#39;TitleBar&#39; /&gt;&lt;P N=&#39;PartOrder&#39; T=&#39;1&#39; /&gt;&lt;P N=&#39;ID&#39; T=&#39;g_78adb5f0_8a94_4fbb_b9f5_b5f2dc57f6c9&#39; /&gt;&lt;P N=&#39;StorageKey&#39; T=&#39;78adb5f0-8a94-4fbb-b9f5-b5f2dc57f6c9&#39; /&gt;&lt;P N=&#39;Qualifier&#39; T=&#39;WPQ1&#39; /&gt;&lt;P N=&#39;ClientName&#39; T=&#39;varPartWPQ1&#39; /&gt;&lt;P N=&#39;Permissions&#39; E=&#39;0&#39; /&gt;&lt;P N=&#39;EffectiveStorage&#39; E=&#39;2&#39; /&gt;&lt;P N=&#39;AllowClose&#39; T=&#39;False&#39; /&gt;&lt;P N=&#39;ExportMode&#39; E=&#39;1&#39; /&gt;&lt;P N=&#39;IsShared&#39; T=&#39;True&#39; /&gt;&lt;P N=&#39;IsStandalone&#39; T=&#39;False&#39; /&gt;&lt;P N=&#39;IsStatic&#39; T=&#39;False&#39; /&gt;&lt;P N=&#39;WebBrowsableObject&#39; R=&#39;0&#39; /&gt;&lt;P N=&#39;ZoneIndex&#39; T=&#39;1&#39; /&gt;&lt;P N=&#39;Page&#39; ID=&#39;1&#39; /&gt;&lt;P N=&#39;TemplateControl&#39; R=&#39;1&#39; /&gt;&lt;P N=&#39;AppRelativeTemplateSourceDirectory&#39; R=&#39;-1&#39; /&gt;" __designer:Preview="&lt;div class=&quot;ms-webpart-chrome ms-webpart-chrome-vertical ms-webpart-chrome-fullWidth &quot;&gt;
+	&lt;div WebPartID=&quot;78adb5f0-8a94-4fbb-b9f5-b5f2dc57f6c9&quot; HasPers=&quot;false&quot; id=&quot;WebPartWPQ1&quot; width=&quot;100%&quot; class=&quot;noindex &quot; allowMinimize=&quot;false&quot; allowRemove=&quot;false&quot; allowDelete=&quot;false&quot; style=&quot;&quot; &gt;&lt;div id=&quot;WebPartContent&quot;&gt;
+		&lt;div&gt;&lt;table id=&quot;MSOWebPart_Header&quot; border=&quot;0&quot; cellpadding=&quot;0&quot; cellspacing=&quot;0&quot; width=&quot;100%&quot;&gt;
+	&lt;tr&gt;
+		&lt;td style=&quot;width:100%;&quot;&gt;&lt;table border=&quot;0&quot; cellpadding=&quot;0&quot; cellspacing=&quot;0&quot;&gt;
+			&lt;tr&gt;
+				&lt;td title=&quot;&quot; class=&quot;ms-titlewpTitleArea&quot; name=&quot;titlewpTitleArea&quot; style=&quot;padding-left:5px;&quot;&gt;&lt;span class=&quot;ms-pagetitle&quot;&gt;test&lt;/span&gt;&lt;/td&gt;
+			&lt;/tr&gt;
+		&lt;/table&gt;&lt;/td&gt;&lt;nobr&gt;&lt;a href=&quot;javascript:MSOTlPn_ShowToolPane2Wrapper(&#39;Edit&#39;, 16, &#39;g_78adb5f0_8a94_4fbb_b9f5_b5f2dc57f6c9&#39;)&quot; id=&quot;EditTitleBar&quot; style=&quot;display:none;&quot;&gt;Edit Title Bar Properties&lt;/a&gt;&lt;/nobr&gt;
+	&lt;/tr&gt;
+&lt;/table&gt;&lt;/div&gt;
+	&lt;/div&gt;&lt;div class=&quot;ms-clear&quot;&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;/div&gt;" __MarkupType="vsattributemarkup" __WebPartId="{78ADB5F0-8A94-4FBB-B9F5-B5F2DC57F6C9}" WebPart="true" Height="" Width=""></WebPartPages:TitleBarWebPart>
+
+</ZoneTemplate></WebPartPages:WebPartZone>
+  </div>
+  <table class="ms-core-tableNoSpace ms-webpartPage-root" width="100%">
+				<tr>
+					<td id="_invisibleIfEmpty" name="_invisibleIfEmpty" valign="top" width="100%"> <WebPartPages:WebPartZone runat="server" Title="loc:FullPage" ID="FullPage" FrameType="TitleBarOnly" __designer:Preview="&lt;Regions&gt;&lt;Region Name=&quot;0&quot; Editable=&quot;True&quot; Content=&quot;&quot; NamingContainer=&quot;True&quot; /&gt;&lt;/Regions&gt;&lt;table cellspacing=&quot;0&quot; cellpadding=&quot;0&quot; border=&quot;0&quot; id=&quot;FullPage&quot;&gt;
+	&lt;tr&gt;
+		&lt;td style=&quot;white-space:nowrap;&quot;&gt;&lt;table cellspacing=&quot;0&quot; cellpadding=&quot;2&quot; border=&quot;0&quot; style=&quot;width:100%;&quot;&gt;
+			&lt;tr&gt;
+				&lt;td style=&quot;white-space:nowrap;&quot;&gt;Full Page&lt;/td&gt;
+			&lt;/tr&gt;
+		&lt;/table&gt;&lt;/td&gt;
+	&lt;/tr&gt;&lt;tr&gt;
+		&lt;td style=&quot;height:100%;&quot;&gt;&lt;table cellspacing=&quot;0&quot; cellpadding=&quot;2&quot; border=&quot;0&quot; style=&quot;border-color:Gray;border-width:1px;border-style:Solid;width:100%;height:100%;&quot;&gt;
+			&lt;tr valign=&quot;top&quot;&gt;
+				&lt;td _designerRegion=&quot;0&quot;&gt;&lt;table cellspacing=&quot;0&quot; cellpadding=&quot;2&quot; border=&quot;0&quot; style=&quot;width:100%;&quot;&gt;
+					&lt;tr&gt;
+						&lt;td style=&quot;height:100%;&quot;&gt;&lt;/td&gt;
+					&lt;/tr&gt;
+				&lt;/table&gt;&lt;/td&gt;
+			&lt;/tr&gt;
+		&lt;/table&gt;&lt;/td&gt;
+	&lt;/tr&gt;
+&lt;/table&gt;" __designer:Values="&lt;P N=&#39;ID&#39; ID=&#39;1&#39; T=&#39;FullPage&#39; /&gt;&lt;P N=&#39;HeaderText&#39; T=&#39;loc:FullPage&#39; /&gt;&lt;P N=&#39;DisplayTitle&#39; ID=&#39;2&#39; T=&#39;Full Page&#39; /&gt;&lt;P N=&#39;FrameType&#39; E=&#39;2&#39; /&gt;&lt;P N=&#39;Title&#39; R=&#39;2&#39; /&gt;&lt;P N=&#39;PartChromeType&#39; E=&#39;3&#39; /&gt;&lt;P N=&#39;Page&#39; ID=&#39;3&#39; /&gt;&lt;P N=&#39;TemplateControl&#39; R=&#39;3&#39; /&gt;&lt;P N=&#39;AppRelativeTemplateSourceDirectory&#39; R=&#39;-1&#39; /&gt;" __designer:Templates="&lt;Group Name=&quot;ZoneTemplate&quot;&gt;&lt;Template Name=&quot;ZoneTemplate&quot; Content=&quot;&quot; /&gt;&lt;/Group&gt;"><ZoneTemplate><WebPartPages:XsltListViewWebPart runat="server" ViewFlag="" ViewSelectorFetchAsync="False" InplaceSearchEnabled="False" ServerRender="False" ClientRender="True" InitialAsyncDataFetch="False" WebId="00000000-0000-0000-0000-000000000000" IsClientRender="False" GhostedXslLink="main.xsl" NoDefaultStyle="" ViewGuid="{42355225-3FCA-460B-BF61-F85488ED7D95}" EnableOriginalValue="False" ViewContentTypeId="" ListUrl="" ListDisplayName="" ListName="{16CCD933-5584-4119-8E87-2F7698F03A50}" ListId="16ccd933-5584-4119-8e87-2f7698f03a50" PageSize="-1" UseSQLDataSourcePaging="True" DataSourceID="" ShowWithSampleData="False" AsyncRefresh="False" ManualRefresh="False" AutoRefresh="False" AutoRefreshInterval="60" Title="Solution" FrameType="Default" SuppressWebPartChrome="False" Description="" IsIncluded="True" ZoneID="FullPage" PartOrder="0" FrameState="Normal" AllowRemove="True" AllowZoneChange="True" AllowMinimize="True" AllowConnect="True" AllowEdit="True" AllowHide="True" IsVisible="True" CatalogIconImageUrl="/_layouts/15/images/itgen.png?rev=23" TitleUrl="/baf3/Lists/c_cCCLISolution" DetailLink="/baf3/Lists/c_cCCLISolution" HelpLink="" HelpMode="Modeless" Dir="Default" PartImageSmall="" MissingAssembly="Cannot import this Web Part." PartImageLarge="/_layouts/15/images/itgen.png?rev=23" IsIncludedFilter="" ExportControlledProperties="False" ConnectionID="00000000-0000-0000-0000-000000000000" ID="g_42355225_3fca_460b_bf61_f85488ed7d95" __designer:Values="&lt;P N=&#39;DisableViewSelectorMenu&#39; T=&#39;True&#39; /&gt;&lt;P N=&#39;DisableSaveAsNewViewButton&#39; T=&#39;True&#39; /&gt;&lt;P N=&#39;InplaceSearchEnabled&#39; T=&#39;False&#39; /&gt;&lt;P N=&#39;ClientRender&#39; T=&#39;True&#39; /&gt;&lt;P N=&#39;InitialAsyncDataFetch&#39; T=&#39;False&#39; /&gt;&lt;P N=&#39;DisabledColumnFilters&#39; Serial=&#39;AAEAAAD/////AQAAAAAAAAAEAQAAAOABU3lzdGVtLkNvbGxlY3Rpb25zLkdlbmVyaWMuRGljdGlvbmFyeWAyW1tTeXN0ZW0uR3VpZCwgbXNjb3JsaWIsIFZlcnNpb249NC4wLjAuMCwgQ3VsdHVyZT1uZXV0cmFsLCBQdWJsaWNLZXlUb2tlbj1iNzdhNWM1NjE5MzRlMDg5XSxbU3lzdGVtLlN0cmluZywgbXNjb3JsaWIsIFZlcnNpb249NC4wLjAuMCwgQ3VsdHVyZT1uZXV0cmFsLCBQdWJsaWNLZXlUb2tlbj1iNzdhNWM1NjE5MzRlMDg5XV0DAAAAB1ZlcnNpb24IQ29tcGFyZXIISGFzaFNpemUAAwAIkAFTeXN0ZW0uQ29sbGVjdGlvbnMuR2VuZXJpYy5HZW5lcmljRXF1YWxpdHlDb21wYXJlcmAxW1tTeXN0ZW0uR3VpZCwgbXNjb3JsaWIsIFZlcnNpb249NC4wLjAuMCwgQ3VsdHVyZT1uZXV0cmFsLCBQdWJsaWNLZXlUb2tlbj1iNzdhNWM1NjE5MzRlMDg5XV0IAAAAAAkCAAAAAAAAAAQCAAAAkAFTeXN0ZW0uQ29sbGVjdGlvbnMuR2VuZXJpYy5HZW5lcmljRXF1YWxpdHlDb21wYXJlcmAxW1tTeXN0ZW0uR3VpZCwgbXNjb3JsaWIsIFZlcnNpb249NC4wLjAuMCwgQ3VsdHVyZT1uZXV0cmFsLCBQdWJsaWNLZXlUb2tlbj1iNzdhNWM1NjE5MzRlMDg5XV0AAAAACw&#39; /&gt;&lt;P N=&#39;ParameterBindings&#39; T=&#39;  &amp;lt;ParameterBinding Name=&quot;dvt_sortdir&quot; Location=&quot;Postback;Connection&quot;/&amp;gt;&amp;#xD;&amp;#xA;            &amp;lt;ParameterBinding Name=&quot;dvt_sortfield&quot; Location=&quot;Postback;Connection&quot;/&amp;gt;&amp;#xD;&amp;#xA;            &amp;lt;ParameterBinding Name=&quot;dvt_startposition&quot; Location=&quot;Postback&quot; DefaultValue=&quot;&quot;/&amp;gt;&amp;#xD;&amp;#xA;            &amp;lt;ParameterBinding Name=&quot;dvt_firstrow&quot; Location=&quot;Postback;Connection&quot;/&amp;gt;&amp;#xD;&amp;#xA;            &amp;lt;ParameterBinding Name=&quot;OpenMenuKeyAccessible&quot; Location=&quot;Resource(wss,OpenMenuKeyAccessible)&quot; /&amp;gt;&amp;#xD;&amp;#xA;            &amp;lt;ParameterBinding Name=&quot;open_menu&quot; Location=&quot;Resource(wss,open_menu)&quot; /&amp;gt;&amp;#xD;&amp;#xA;            &amp;lt;ParameterBinding Name=&quot;select_deselect_all&quot; Location=&quot;Resource(wss,select_deselect_all)&quot; /&amp;gt;&amp;#xD;&amp;#xA;            &amp;lt;ParameterBinding Name=&quot;idPresEnabled&quot; Location=&quot;Resource(wss,idPresEnabled)&quot; /&amp;gt;&amp;lt;ParameterBinding Name=&quot;NoAnnouncements&quot; Location=&quot;Resource(wss,noXinviewofY_LIST)&quot; /&amp;gt;&amp;lt;ParameterBinding Name=&quot;NoAnnouncementsHowTo&quot; Location=&quot;Resource(wss,noXinviewofY_DEFAULT)&quot; /&amp;gt;&#39; /&gt;&lt;P N=&#39;CanHaveServerControls&#39; T=&#39;False&#39; /&gt;&lt;P N=&#39;ViewGuid&#39; T=&#39;{42355225-3FCA-460B-BF61-F85488ED7D95}&#39; /&gt;&lt;P N=&#39;ListName&#39; T=&#39;{16CCD933-5584-4119-8E87-2F7698F03A50}&#39; /&gt;&lt;P N=&#39;ListId&#39; T=&#39;16ccd933-5584-4119-8e87-2f7698f03a50&#39; /&gt;&lt;P N=&#39;ViewId&#39; T=&#39;1&#39; /&gt;&lt;P N=&#39;ViewFlags&#39; E=&#39;8388621&#39; /&gt;&lt;P N=&#39;ParameterValues&#39; Serial=&#39;AAEAAAD/////AQAAAAAAAAAMAgAAAFhNaWNyb3NvZnQuU2hhcmVQb2ludCwgVmVyc2lvbj0xNS4wLjAuMCwgQ3VsdHVyZT1uZXV0cmFsLCBQdWJsaWNLZXlUb2tlbj03MWU5YmNlMTExZTk0MjljBQEAAAA9TWljcm9zb2Z0LlNoYXJlUG9pbnQuV2ViUGFydFBhZ2VzLlBhcmFtZXRlck5hbWVWYWx1ZUhhc2h0YWJsZQEAAAAFX2NvbGwDHFN5c3RlbS5Db2xsZWN0aW9ucy5IYXNodGFibGUCAAAACQMAAAAEAwAAABxTeXN0ZW0uQ29sbGVjdGlvbnMuSGFzaHRhYmxlBwAAAApMb2FkRmFjdG9yB1ZlcnNpb24IQ29tcGFyZXIQSGFzaENvZGVQcm92aWRlcghIYXNoU2l6ZQRLZXlzBlZhbHVlcwAAAwMABQULCBxTeXN0ZW0uQ29sbGVjdGlvbnMuSUNvbXBhcmVyJFN5c3RlbS5Db2xsZWN0aW9ucy5JSGFzaENvZGVQcm92aWRlcgjsUTg/AAAAAAoKAwAAAAkEAAAACQUAAAAQBAAAAAAAAAAQBQAAAAAAAAAL&#39; /&gt;&lt;P N=&#39;FilterValues&#39; Serial=&#39;AAEAAAD/////AQAAAAAAAAAMAgAAAFhNaWNyb3NvZnQuU2hhcmVQb2ludCwgVmVyc2lvbj0xNS4wLjAuMCwgQ3VsdHVyZT1uZXV0cmFsLCBQdWJsaWNLZXlUb2tlbj03MWU5YmNlMTExZTk0MjljBQEAAAA9TWljcm9zb2Z0LlNoYXJlUG9pbnQuV2ViUGFydFBhZ2VzLlBhcmFtZXRlck5hbWVWYWx1ZUhhc2h0YWJsZQEAAAAFX2NvbGwDHFN5c3RlbS5Db2xsZWN0aW9ucy5IYXNodGFibGUCAAAACgs&#39; /&gt;&lt;P N=&#39;XmlDefinition&#39; T=&#39;&amp;lt;View Name=&quot;{42355225-3FCA-460B-BF61-F85488ED7D95}&quot; MobileView=&quot;TRUE&quot; Type=&quot;HTML&quot; Hidden=&quot;TRUE&quot; DisplayName=&quot;&quot; Url=&quot;/baf3/SitePages/test.aspx&quot; Level=&quot;1&quot; BaseViewID=&quot;1&quot; ContentTypeID=&quot;0x&quot; ImageUrl=&quot;/_layouts/15/images/generic.png?rev=23&quot; &amp;gt;&amp;lt;Query&amp;gt;&amp;lt;OrderBy&amp;gt;&amp;lt;FieldRef Name=&quot;ID&quot;/&amp;gt;&amp;lt;/OrderBy&amp;gt;&amp;lt;/Query&amp;gt;&amp;lt;ViewFields&amp;gt;&amp;lt;FieldRef Name=&quot;Edit&quot;/&amp;gt;&amp;lt;FieldRef Name=&quot;LinkTitle&quot;/&amp;gt;&amp;lt;FieldRef Name=&quot;c_cCCFDSolutionID&quot;/&amp;gt;&amp;lt;FieldRef Name=&quot;c_cCCFDSolutionName&quot;/&amp;gt;&amp;lt;FieldRef Name=&quot;c_cCCFDSolutionDescription&quot;/&amp;gt;&amp;lt;/ViewFields&amp;gt;&amp;lt;RowLimit Paged=&quot;TRUE&quot;&amp;gt;30&amp;lt;/RowLimit&amp;gt;&amp;lt;JSLink&amp;gt;clienttemplates.js&amp;lt;/JSLink&amp;gt;&amp;lt;XslLink Default=&quot;TRUE&quot;&amp;gt;main.xsl&amp;lt;/XslLink&amp;gt;&amp;lt;Toolbar Type=&quot;Standard&quot;/&amp;gt;&amp;lt;/View&amp;gt;&#39; /&gt;&lt;P N=&#39;AllowXSLTEditing&#39; T=&#39;True&#39; /&gt;&lt;P N=&#39;Title&#39; ID=&#39;1&#39; T=&#39;Solution&#39; /&gt;&lt;P N=&#39;ZoneID&#39; T=&#39;FullPage&#39; /&gt;&lt;P N=&#39;CatalogIconImageUrl&#39; ID=&#39;2&#39; T=&#39;/_layouts/15/images/itgen.png?rev=23&#39; /&gt;&lt;P N=&#39;TitleUrl&#39; ID=&#39;3&#39; T=&#39;/baf3/Lists/c_cCCLISolution&#39; /&gt;&lt;P N=&#39;DetailLink&#39; R=&#39;3&#39; /&gt;&lt;P N=&#39;PartImageLarge&#39; R=&#39;2&#39; /&gt;&lt;P N=&#39;ID&#39; T=&#39;g_42355225_3fca_460b_bf61_f85488ed7d95&#39; /&gt;&lt;P N=&#39;StorageKey&#39; T=&#39;42355225-3fca-460b-bf61-f85488ed7d95&#39; /&gt;&lt;P N=&#39;Qualifier&#39; T=&#39;WPQ2&#39; /&gt;&lt;P N=&#39;ClientName&#39; T=&#39;varPartWPQ2&#39; /&gt;&lt;P N=&#39;Permissions&#39; E=&#39;0&#39; /&gt;&lt;P N=&#39;EffectiveTitle&#39; R=&#39;1&#39; /&gt;&lt;P N=&#39;EffectiveStorage&#39; E=&#39;2&#39; /&gt;&lt;P N=&#39;EffectiveFrameType&#39; E=&#39;2&#39; /&gt;&lt;P N=&#39;DisplayTitle&#39; R=&#39;1&#39; /&gt;&lt;P N=&#39;IsShared&#39; T=&#39;True&#39; /&gt;&lt;P N=&#39;IsStandalone&#39; T=&#39;False&#39; /&gt;&lt;P N=&#39;IsStatic&#39; T=&#39;False&#39; /&gt;&lt;P N=&#39;WebBrowsableObject&#39; R=&#39;0&#39; /&gt;&lt;P N=&#39;Page&#39; ID=&#39;4&#39; /&gt;&lt;P N=&#39;TemplateControl&#39; R=&#39;4&#39; /&gt;&lt;P N=&#39;AppRelativeTemplateSourceDirectory&#39; R=&#39;-1&#39; /&gt;" __designer:Preview="&lt;Regions&gt;&lt;Region Name=&quot;0&quot; Editable=&quot;True&quot; Content=&quot;&quot; NamingContainer=&quot;True&quot; /&gt;&lt;/Regions&gt;&lt;div class=&quot;ms-webpart-chrome ms-webpart-chrome-vertical ms-webpart-chrome-fullWidth &quot;&gt;
+	&lt;div class=&quot;ms-webpart-chrome-title&quot; id=&quot;WebPartWPQ2_ChromeTitle&quot;&gt;
+		&lt;span title=&quot;Solution&quot; id=&quot;WebPartTitleWPQ2&quot; class=&quot;js-webpart-titleCell&quot;&gt;&lt;div class=&quot;ms-webpart-titleText&quot;&gt;&lt;a accesskey=&quot;W&quot; href=&quot;/baf3/Lists/c_cCCLISolution&quot;&gt;&lt;nobr&gt;&lt;span&gt;Solution&lt;/span&gt;&lt;span id=&quot;WebPartCaptionWPQ2&quot;&gt;&lt;/span&gt;&lt;/nobr&gt;&lt;/a&gt;&lt;/div&gt;&lt;/span&gt;
+	&lt;/div&gt;&lt;div WebPartID=&quot;42355225-3fca-460b-bf61-f85488ed7d95&quot; HasPers=&quot;false&quot; id=&quot;WebPartWPQ2&quot; width=&quot;100%&quot; class=&quot;noindex ms-wpContentDivSpace &quot; allowDelete=&quot;false&quot; allowExport=&quot;false&quot; style=&quot;&quot; &gt;&lt;div id=&quot;WebPartContent&quot;&gt;
+		&lt;div class=&quot;ms-webpart-chrome ms-webpart-chrome-vertical ms-webpart-chrome-fullWidth &quot;&gt;
+	&lt;div WebPartID=&quot;42355225-3fca-460b-bf61-f85488ed7d95&quot; HasPers=&quot;false&quot; id=&quot;WebPartWPQ2&quot; width=&quot;100%&quot; class=&quot;noindex &quot; allowDelete=&quot;false&quot; allowExport=&quot;false&quot; style=&quot;&quot; &gt;&lt;div id=&quot;WebPartContent&quot;&gt;The DataFormWebPart does not provide a design-time preview.&lt;/div&gt;&lt;div class=&quot;ms-clear&quot;&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;/div&gt;
+	&lt;/div&gt;&lt;div class=&quot;ms-clear&quot;&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;/div&gt;" __MarkupType="vsattributemarkup" __WebPartId="{42355225-3FCA-460B-BF61-F85488ED7D95}" __AllowXSLTEditing="true" __designer:ExpandedXmlDef="&lt;dsQueryResponse ViewStyleID=&quot;&quot; BaseViewID=&quot;1&quot; TemplateType=&quot;100&quot; RowLimit=&quot;30&quot;&gt;&lt;x:schema xmlns:d=&quot;http://schemas.microsoft.com/sharepoint/dsp&quot; xmlns:x=&quot;http://www.w3.org/2001/XMLSchema&quot;&gt;&lt;x:element name=&quot;Rows&quot;&gt;&lt;x:complexType&gt;&lt;x:sequence maxOccurs=&quot;unbounded&quot;&gt;&lt;x:element name=&quot;Row&quot; minOccurs=&quot;0&quot;&gt;&lt;x:complexType&gt;&lt;x:attribute name=&quot;Title&quot; use=&quot;required&quot; d:showInDisplayForm=&quot;true&quot; d:showInNewForm=&quot;true&quot; d:showInEditForm=&quot;true&quot; d:filterSupport=&quot;IsNull;IsNotNull;Eq;Neq;Lt;Gt;Leq;Geq;Contains;BeginsWith;&quot; d:displayName=&quot;Title&quot; type=&quot;x:string&quot; /&gt;&lt;x:attribute name=&quot;c_cCCFDSolutionID&quot; d:showInDisplayForm=&quot;true&quot; d:showInNewForm=&quot;true&quot; d:showInEditForm=&quot;true&quot; d:filterSupport=&quot;IsNull;IsNotNull;Eq;Neq;Lt;Gt;Leq;Geq;&quot; d:displayName=&quot;Solution ID&quot; type=&quot;x:int&quot; /&gt;&lt;x:attribute name=&quot;c_cCCFDSolutionName&quot; d:showInDisplayForm=&quot;true&quot; d:showInNewForm=&quot;true&quot; d:showInEditForm=&quot;true&quot; d:filterSupport=&quot;IsNull;IsNotNull;Eq;Neq;Lt;Gt;Leq;Geq;Contains;BeginsWith;&quot; d:displayName=&quot;Solution Name&quot; type=&quot;x:string&quot; /&gt;&lt;x:attribute name=&quot;c_cCCFDSolutionDescription&quot; d:sortable=&quot;false&quot; d:showInDisplayForm=&quot;true&quot; d:showInNewForm=&quot;true&quot; d:showInEditForm=&quot;true&quot; d:filterSupport=&quot;IsNull;IsNotNull;Contains;BeginsWith;&quot; d:displayName=&quot;Descprition&quot; type=&quot;x:string&quot; /&gt;&lt;x:attribute name=&quot;breLog&quot; d:sortable=&quot;false&quot; d:showInDisplayForm=&quot;true&quot; d:showInNewForm=&quot;true&quot; d:showInEditForm=&quot;true&quot; d:filterSupport=&quot;IsNull;IsNotNull;Contains;BeginsWith;&quot; d:displayName=&quot;BRE Log&quot; type=&quot;x:string&quot; /&gt;&lt;x:attribute name=&quot;ID&quot; d:readOnly=&quot;true&quot; d:showInDisplayForm=&quot;true&quot; d:showInNewForm=&quot;true&quot; d:showInEditForm=&quot;true&quot; d:filterSupport=&quot;IsNull;IsNotNull;Eq;Neq;Lt;Gt;Leq;Geq;&quot; d:displayName=&quot;ID&quot; type=&quot;x:int&quot; /&gt;&lt;x:attribute name=&quot;ContentType&quot; d:sortable=&quot;false&quot; d:showInDisplayForm=&quot;true&quot; d:showInNewForm=&quot;true&quot; d:showInEditForm=&quot;true&quot; d:displayName=&quot;Content Type&quot; type=&quot;x:string&quot; /&gt;&lt;x:attribute name=&quot;Modified&quot; d:readOnly=&quot;true&quot; d:showInDisplayForm=&quot;true&quot; d:showInNewForm=&quot;true&quot; d:showInEditForm=&quot;true&quot; d:filterSupport=&quot;IsNull;IsNotNull;Eq;Neq;Lt;Gt;Leq;Geq;&quot; d:displayName=&quot;Modified&quot; type=&quot;x:dateTime&quot; /&gt;&lt;x:attribute name=&quot;Created&quot; d:readOnly=&quot;true&quot; d:showInDisplayForm=&quot;true&quot; d:showInNewForm=&quot;true&quot; d:showInEditForm=&quot;true&quot; d:filterSupport=&quot;IsNull;IsNotNull;Eq;Neq;Lt;Gt;Leq;Geq;&quot; d:displayName=&quot;Created&quot; type=&quot;x:dateTime&quot; /&gt;&lt;x:attribute name=&quot;Author&quot; d:readOnly=&quot;true&quot; d:showInDisplayForm=&quot;true&quot; d:showInNewForm=&quot;true&quot; d:showInEditForm=&quot;true&quot; d:userField=&quot;true&quot; d:lookupField=&quot;true&quot; d:filterSupport=&quot;IsNull;IsNotNull;Eq;Neq;Lt;Gt;Leq;Geq;&quot; d:displayName=&quot;Created By&quot;&gt;&lt;x:simpleType&gt;&lt;x:restriction base=&quot;x:string&quot;&gt;&lt;x:enumeration value=&quot;Abraham Simpson&quot; /&gt;&lt;x:enumeration value=&quot;administrator&quot; /&gt;&lt;x:enumeration value=&quot;admin_s4s&quot; /&gt;&lt;x:enumeration value=&quot;Andreas Bracht&quot; /&gt;&lt;x:enumeration value=&quot;Andrew Hamilton&quot; /&gt;&lt;x:enumeration value=&quot;Audrey McConnell&quot; /&gt;&lt;x:enumeration value=&quot;Bart Simpson&quot; /&gt;&lt;x:enumeration value=&quot;Buck McCoy&quot; /&gt;&lt;x:enumeration value=&quot;Chester Lampwick&quot; /&gt;&lt;x:enumeration value=&quot;Clay Roberts&quot; /&gt;&lt;x:enumeration value=&quot;Cornelius Simpson&quot; /&gt;&lt;x:enumeration value=&quot;Daniel&quot; /&gt;&lt;x:enumeration value=&quot;daniel.szego&quot; /&gt;&lt;x:enumeration value=&quot;Dave Rosenfield&quot; /&gt;&lt;x:enumeration value=&quot;Devan Woosterfield&quot; /&gt;&lt;x:enumeration value=&quot;Eliza Simpson&quot; /&gt;&lt;x:enumeration value=&quot;Francine Rhenquist&quot; /&gt;&lt;x:enumeration value=&quot;Frank Ormand&quot; /&gt;&lt;x:enumeration value=&quot;Georgia O&#39;Keeffe&quot; /&gt;&lt;x:enumeration value=&quot;Griff McDonald&quot; /&gt;&lt;x:enumeration value=&quot;Harry&quot; /&gt;&lt;x:enumeration value=&quot;Harvey Raymondo&quot; /&gt;&lt;x:enumeration value=&quot;Homer Simpson&quot; /&gt;&lt;x:enumeration value=&quot;Howell Huser&quot; /&gt;&lt;x:enumeration value=&quot;Hugo Simpson&quot; /&gt;&lt;x:enumeration value=&quot;Ishmael Simpson&quot; /&gt;&lt;x:enumeration value=&quot;ixto&quot; /&gt;&lt;x:enumeration value=&quot;Jack Nicholson&quot; /&gt;&lt;x:enumeration value=&quot;Jay Sherman&quot; /&gt;&lt;x:enumeration value=&quot;Jim Morrison&quot; /&gt;&lt;x:enumeration value=&quot;Jimmy Pearson&quot; /&gt;&lt;x:enumeration value=&quot;Joe Perry&quot; /&gt;&lt;x:enumeration value=&quot;John Smith&quot; /&gt;&lt;x:enumeration value=&quot;Keith Olbermann&quot; /&gt;&lt;x:enumeration value=&quot;Lisa Simpson&quot; /&gt;&lt;x:enumeration value=&quot;Luke Perry&quot; /&gt;&lt;x:enumeration value=&quot;Mabel Simpson&quot; /&gt;&lt;x:enumeration value=&quot;Maggie Simpson&quot; /&gt;&lt;x:enumeration value=&quot;Marge Simpson&quot; /&gt;&lt;x:enumeration value=&quot;Mary Smith&quot; /&gt;&lt;x:enumeration value=&quot;Matthias&quot; /&gt;&lt;x:enumeration value=&quot;matthias.werner&quot; /&gt;&lt;x:enumeration value=&quot;Melvin van Horne&quot; /&gt;&lt;x:enumeration value=&quot;Member01&quot; /&gt;&lt;x:enumeration value=&quot;Milton Haas&quot; /&gt;&lt;x:enumeration value=&quot;Mindy Morehouse&quot; /&gt;&lt;x:enumeration value=&quot;Nancy Reagan&quot; /&gt;&lt;x:enumeration value=&quot;Nichelle Nichols&quot; /&gt;&lt;x:enumeration value=&quot;Nick Riviera&quot; /&gt;&lt;x:enumeration value=&quot;NT AUTHORITY\authenticated users&quot; /&gt;&lt;x:enumeration value=&quot;NT AUTHORITY\LOCAL SERVICE&quot; /&gt;&lt;x:enumeration value=&quot;NT AUTHORITY\local service&quot; /&gt;&lt;x:enumeration value=&quot;NT AUTHORITY\network service&quot; /&gt;&lt;x:enumeration value=&quot;NT AUTHORITY\system&quot; /&gt;&lt;x:enumeration value=&quot;Oliver&quot; /&gt;&lt;x:enumeration value=&quot;oliver.schumacher&quot; /&gt;&lt;x:enumeration value=&quot;Owner01&quot; /&gt;&lt;x:enumeration value=&quot;Paris Texan&quot; /&gt;&lt;x:enumeration value=&quot;Patrick&quot; /&gt;&lt;x:enumeration value=&quot;patrick.mueller&quot; /&gt;&lt;x:enumeration value=&quot;Paul McCartney&quot; /&gt;&lt;x:enumeration value=&quot;Quenley Woosterfield&quot; /&gt;&lt;x:enumeration value=&quot;Ralph Melish&quot; /&gt;&lt;x:enumeration value=&quot;Ray Patterson&quot; /&gt;&lt;x:enumeration value=&quot;Rich Moore&quot; /&gt;&lt;x:enumeration value=&quot;Rich Texan&quot; /&gt;&lt;x:enumeration value=&quot;Sarah Wiggum&quot; /&gt;&lt;x:enumeration value=&quot;SP-EG\administrator&quot; /&gt;&lt;x:enumeration value=&quot;c_c\controlling&quot; /&gt;&lt;x:enumeration value=&quot;SP-EG\extern&quot; /&gt;&lt;x:enumeration value=&quot;c_c\host02$&quot; /&gt;&lt;x:enumeration value=&quot;SP-EG\intern&quot; /&gt;&lt;x:enumeration value=&quot;c_c\spmembers&quot; /&gt;&lt;x:enumeration value=&quot;c_c\spown&quot; /&gt;&lt;x:enumeration value=&quot;c_c\spowners&quot; /&gt;&lt;x:enumeration value=&quot;c_c\sppartner&quot; /&gt;&lt;x:enumeration value=&quot;c_c\springfield_visitors&quot; /&gt;&lt;x:enumeration value=&quot;c_c\spvisitors&quot; /&gt;&lt;x:enumeration value=&quot;System Account&quot; /&gt;&lt;x:enumeration value=&quot;Tom O&#39;Flanagan&quot; /&gt;&lt;x:enumeration value=&quot;Troy McClure&quot; /&gt;&lt;x:enumeration value=&quot;Visitor01&quot; /&gt;&lt;x:enumeration value=&quot;Walt Warren&quot; /&gt;&lt;/x:restriction&gt;&lt;/x:simpleType&gt;&lt;/x:attribute&gt;&lt;x:attribute name=&quot;Editor&quot; d:readOnly=&quot;true&quot; d:showInDisplayForm=&quot;true&quot; d:showInNewForm=&quot;true&quot; d:showInEditForm=&quot;true&quot; d:userField=&quot;true&quot; d:lookupField=&quot;true&quot; d:filterSupport=&quot;IsNull;IsNotNull;Eq;Neq;Lt;Gt;Leq;Geq;&quot; d:displayName=&quot;Modified By&quot;&gt;&lt;x:simpleType&gt;&lt;x:restriction base=&quot;x:string&quot;&gt;&lt;x:enumeration value=&quot;Abraham Simpson&quot; /&gt;&lt;x:enumeration value=&quot;administrator&quot; /&gt;&lt;x:enumeration value=&quot;admin_s4s&quot; /&gt;&lt;x:enumeration value=&quot;Andreas Bracht&quot; /&gt;&lt;x:enumeration value=&quot;Andrew Hamilton&quot; /&gt;&lt;x:enumeration value=&quot;Audrey McConnell&quot; /&gt;&lt;x:enumeration value=&quot;Bart Simpson&quot; /&gt;&lt;x:enumeration value=&quot;Buck McCoy&quot; /&gt;&lt;x:enumeration value=&quot;Chester Lampwick&quot; /&gt;&lt;x:enumeration value=&quot;Clay Roberts&quot; /&gt;&lt;x:enumeration value=&quot;Cornelius Simpson&quot; /&gt;&lt;x:enumeration value=&quot;Daniel&quot; /&gt;&lt;x:enumeration value=&quot;daniel.szego&quot; /&gt;&lt;x:enumeration value=&quot;Dave Rosenfield&quot; /&gt;&lt;x:enumeration value=&quot;Devan Woosterfield&quot; /&gt;&lt;x:enumeration value=&quot;Eliza Simpson&quot; /&gt;&lt;x:enumeration value=&quot;Francine Rhenquist&quot; /&gt;&lt;x:enumeration value=&quot;Frank Ormand&quot; /&gt;&lt;x:enumeration value=&quot;Georgia O&#39;Keeffe&quot; /&gt;&lt;x:enumeration value=&quot;Griff McDonald&quot; /&gt;&lt;x:enumeration value=&quot;Harry&quot; /&gt;&lt;x:enumeration value=&quot;Harvey Raymondo&quot; /&gt;&lt;x:enumeration value=&quot;Homer Simpson&quot; /&gt;&lt;x:enumeration value=&quot;Howell Huser&quot; /&gt;&lt;x:enumeration value=&quot;Hugo Simpson&quot; /&gt;&lt;x:enumeration value=&quot;Ishmael Simpson&quot; /&gt;&lt;x:enumeration value=&quot;ixto&quot; /&gt;&lt;x:enumeration value=&quot;Jack Nicholson&quot; /&gt;&lt;x:enumeration value=&quot;Jay Sherman&quot; /&gt;&lt;x:enumeration value=&quot;Jim Morrison&quot; /&gt;&lt;x:enumeration value=&quot;Jimmy Pearson&quot; /&gt;&lt;x:enumeration value=&quot;Joe Perry&quot; /&gt;&lt;x:enumeration value=&quot;John Smith&quot; /&gt;&lt;x:enumeration value=&quot;Keith Olbermann&quot; /&gt;&lt;x:enumeration value=&quot;Lisa Simpson&quot; /&gt;&lt;x:enumeration value=&quot;Luke Perry&quot; /&gt;&lt;x:enumeration value=&quot;Mabel Simpson&quot; /&gt;&lt;x:enumeration value=&quot;Maggie Simpson&quot; /&gt;&lt;x:enumeration value=&quot;Marge Simpson&quot; /&gt;&lt;x:enumeration value=&quot;Mary Smith&quot; /&gt;&lt;x:enumeration value=&quot;Matthias&quot; /&gt;&lt;x:enumeration value=&quot;matthias.werner&quot; /&gt;&lt;x:enumeration value=&quot;Melvin van Horne&quot; /&gt;&lt;x:enumeration value=&quot;Member01&quot; /&gt;&lt;x:enumeration value=&quot;Milton Haas&quot; /&gt;&lt;x:enumeration value=&quot;Mindy Morehouse&quot; /&gt;&lt;x:enumeration value=&quot;Nancy Reagan&quot; /&gt;&lt;x:enumeration value=&quot;Nichelle Nichols&quot; /&gt;&lt;x:enumeration value=&quot;Nick Riviera&quot; /&gt;&lt;x:enumeration value=&quot;NT AUTHORITY\authenticated users&quot; /&gt;&lt;x:enumeration value=&quot;NT AUTHORITY\LOCAL SERVICE&quot; /&gt;&lt;x:enumeration value=&quot;NT AUTHORITY\local service&quot; /&gt;&lt;x:enumeration value=&quot;NT AUTHORITY\network service&quot; /&gt;&lt;x:enumeration value=&quot;NT AUTHORITY\system&quot; /&gt;&lt;x:enumeration value=&quot;Oliver&quot; /&gt;&lt;x:enumeration value=&quot;oliver.schumacher&quot; /&gt;&lt;x:enumeration value=&quot;Owner01&quot; /&gt;&lt;x:enumeration value=&quot;Paris Texan&quot; /&gt;&lt;x:enumeration value=&quot;Patrick&quot; /&gt;&lt;x:enumeration value=&quot;patrick.mueller&quot; /&gt;&lt;x:enumeration value=&quot;Paul McCartney&quot; /&gt;&lt;x:enumeration value=&quot;Quenley Woosterfield&quot; /&gt;&lt;x:enumeration value=&quot;Ralph Melish&quot; /&gt;&lt;x:enumeration value=&quot;Ray Patterson&quot; /&gt;&lt;x:enumeration value=&quot;Rich Moore&quot; /&gt;&lt;x:enumeration value=&quot;Rich Texan&quot; /&gt;&lt;x:enumeration value=&quot;Sarah Wiggum&quot; /&gt;&lt;x:enumeration value=&quot;SP-EG\administrator&quot; /&gt;&lt;x:enumeration value=&quot;c_c\controlling&quot; /&gt;&lt;x:enumeration value=&quot;SP-EG\extern&quot; /&gt;&lt;x:enumeration value=&quot;c_c\host02$&quot; /&gt;&lt;x:enumeration value=&quot;SP-EG\intern&quot; /&gt;&lt;x:enumeration value=&quot;c_c\spmembers&quot; /&gt;&lt;x:enumeration value=&quot;c_c\spown&quot; /&gt;&lt;x:enumeration value=&quot;c_c\spowners&quot; /&gt;&lt;x:enumeration value=&quot;c_c\sppartner&quot; /&gt;&lt;x:enumeration value=&quot;c_c\springfield_visitors&quot; /&gt;&lt;x:enumeration value=&quot;c_c\spvisitors&quot; /&gt;&lt;x:enumeration value=&quot;System Account&quot; /&gt;&lt;x:enumeration value=&quot;Tom O&#39;Flanagan&quot; /&gt;&lt;x:enumeration value=&quot;Troy McClure&quot; /&gt;&lt;x:enumeration value=&quot;Visitor01&quot; /&gt;&lt;x:enumeration value=&quot;Walt Warren&quot; /&gt;&lt;/x:restriction&gt;&lt;/x:simpleType&gt;&lt;/x:attribute&gt;&lt;x:attribute name=&quot;_UIVersionString&quot; d:readOnly=&quot;true&quot; d:showInDisplayForm=&quot;true&quot; d:showInNewForm=&quot;true&quot; d:showInEditForm=&quot;true&quot; d:filterSupport=&quot;IsNull;IsNotNull;Eq;Neq;Lt;Gt;Leq;Geq;Contains;BeginsWith;&quot; d:displayName=&quot;Version&quot; type=&quot;x:string&quot; /&gt;&lt;x:attribute name=&quot;Attachments&quot; d:showInDisplayForm=&quot;true&quot; d:showInNewForm=&quot;true&quot; d:showInEditForm=&quot;true&quot; d:filterSupport=&quot;IsNull;IsNotNull;Eq;Neq;&quot; d:displayName=&quot;Attachments&quot; type=&quot;x:boolean&quot; /&gt;&lt;x:attribute name=&quot;File_x0020_Type&quot; d:readOnly=&quot;true&quot; d:showInDisplayForm=&quot;true&quot; d:showInNewForm=&quot;true&quot; d:showInEditForm=&quot;true&quot; d:filterSupport=&quot;IsNull;IsNotNull;Eq;Neq;Lt;Gt;Leq;Geq;Contains;BeginsWith;&quot; d:displayName=&quot;File Type&quot; type=&quot;x:string&quot; /&gt;&lt;x:attribute name=&quot;FileLeafRef&quot; d:showInDisplayForm=&quot;true&quot; d:showInNewForm=&quot;true&quot; d:showInEditForm=&quot;true&quot; d:filterSupport=&quot;IsNull;IsNotNull;Eq;Neq;Lt;Gt;Leq;Geq;Contains;BeginsWith;&quot; d:displayName=&quot;Name (for use in forms)&quot; type=&quot;x:string&quot; /&gt;&lt;x:attribute name=&quot;FileDirRef&quot; d:readOnly=&quot;true&quot; d:showInDisplayForm=&quot;true&quot; d:showInNewForm=&quot;true&quot; d:showInEditForm=&quot;true&quot; d:filterSupport=&quot;IsNull;IsNotNull;Eq;Neq;Lt;Gt;Leq;Geq;&quot; d:displayName=&quot;Path&quot; type=&quot;x:string&quot; /&gt;&lt;x:attribute name=&quot;FSObjType&quot; d:readOnly=&quot;true&quot; d:showInDisplayForm=&quot;true&quot; d:showInNewForm=&quot;true&quot; d:showInEditForm=&quot;true&quot; d:filterSupport=&quot;IsNull;IsNotNull;Eq;Neq;Lt;Gt;Leq;Geq;&quot; d:displayName=&quot;Item Type&quot; type=&quot;x:string&quot; /&gt;&lt;x:attribute name=&quot;_HasCopyDestinations&quot; d:readOnly=&quot;true&quot; d:showInDisplayForm=&quot;true&quot; d:showInNewForm=&quot;true&quot; d:showInEditForm=&quot;true&quot; d:filterSupport=&quot;IsNull;IsNotNull;Eq;Neq;&quot; d:displayName=&quot;Has Copy Destinations&quot; type=&quot;x:boolean&quot; /&gt;&lt;x:attribute name=&quot;_CopySource&quot; d:readOnly=&quot;true&quot; d:showInDisplayForm=&quot;true&quot; d:showInNewForm=&quot;true&quot; d:showInEditForm=&quot;true&quot; d:filterSupport=&quot;IsNull;IsNotNull;Eq;Neq;Lt;Gt;Leq;Geq;Contains;BeginsWith;&quot; d:displayName=&quot;Copy Source&quot; type=&quot;x:string&quot; /&gt;&lt;x:attribute name=&quot;ContentTypeId&quot; d:readOnly=&quot;true&quot; d:showInDisplayForm=&quot;true&quot; d:showInNewForm=&quot;true&quot; d:showInEditForm=&quot;true&quot; d:displayName=&quot;Content Type ID&quot; type=&quot;x:string&quot; /&gt;&lt;x:attribute name=&quot;_ModerationStatus&quot; d:readOnly=&quot;true&quot; d:showInDisplayForm=&quot;true&quot; d:showInNewForm=&quot;true&quot; d:showInEditForm=&quot;true&quot; d:filterSupport=&quot;IsNull;IsNotNull;Eq;Neq;&quot; d:displayName=&quot;Approval Status&quot;&gt;&lt;x:simpleType&gt;&lt;x:restriction base=&quot;x:string&quot;&gt;&lt;x:enumeration value=&quot;Approved&quot; /&gt;&lt;x:enumeration value=&quot;Rejected&quot; /&gt;&lt;x:enumeration value=&quot;Pending&quot; /&gt;&lt;x:enumeration value=&quot;Draft&quot; /&gt;&lt;x:enumeration value=&quot;Scheduled&quot; /&gt;&lt;/x:restriction&gt;&lt;/x:simpleType&gt;&lt;/x:attribute&gt;&lt;x:attribute name=&quot;_UIVersion&quot; d:readOnly=&quot;true&quot; d:showInDisplayForm=&quot;true&quot; d:showInNewForm=&quot;true&quot; d:showInEditForm=&quot;true&quot; d:filterSupport=&quot;IsNull;IsNotNull;Eq;Neq;Lt;Gt;Leq;Geq;&quot; d:displayName=&quot;UI Version&quot; type=&quot;x:int&quot; /&gt;&lt;x:attribute name=&quot;Created_x0020_Date&quot; d:readOnly=&quot;true&quot; d:showInDisplayForm=&quot;true&quot; d:showInNewForm=&quot;true&quot; d:showInEditForm=&quot;true&quot; d:filterSupport=&quot;IsNull;IsNotNull;Eq;Neq;Lt;Gt;Leq;Geq;&quot; d:displayName=&quot;Created&quot; type=&quot;x:dateTime&quot; /&gt;&lt;x:attribute name=&quot;FileRef&quot; d:readOnly=&quot;true&quot; d:showInDisplayForm=&quot;true&quot; d:showInNewForm=&quot;true&quot; d:showInEditForm=&quot;true&quot; d:filterSupport=&quot;IsNull;IsNotNull;Eq;Neq;Lt;Gt;Leq;Geq;&quot; d:displayName=&quot;URL Path&quot; type=&quot;x:string&quot; /&gt;&lt;x:attribute name=&quot;ItemChildCount&quot; d:readOnly=&quot;true&quot; d:showInDisplayForm=&quot;true&quot; d:showInNewForm=&quot;true&quot; d:showInEditForm=&quot;true&quot; d:filterSupport=&quot;IsNull;IsNotNull;Eq;Neq;Lt;Gt;Leq;Geq;&quot; d:displayName=&quot;Item Child Count&quot; type=&quot;x:string&quot; /&gt;&lt;x:attribute name=&quot;FolderChildCount&quot; d:readOnly=&quot;true&quot; d:showInDisplayForm=&quot;true&quot; d:showInNewForm=&quot;true&quot; d:showInEditForm=&quot;true&quot; d:filterSupport=&quot;IsNull;IsNotNull;Eq;Neq;Lt;Gt;Leq;Geq;&quot; d:displayName=&quot;Folder Child Count&quot; type=&quot;x:string&quot; /&gt;&lt;x:attribute name=&quot;AppAuthor&quot; d:readOnly=&quot;true&quot; d:showInDisplayForm=&quot;true&quot; d:showInNewForm=&quot;true&quot; d:showInEditForm=&quot;true&quot; d:filterSupport=&quot;IsNull;IsNotNull;Eq;Neq;Lt;Gt;Leq;Geq;&quot; d:displayName=&quot;App Created By&quot; type=&quot;x:string&quot; /&gt;&lt;x:attribute name=&quot;AppEditor&quot; d:readOnly=&quot;true&quot; d:showInDisplayForm=&quot;true&quot; d:showInNewForm=&quot;true&quot; d:showInEditForm=&quot;true&quot; d:filterSupport=&quot;IsNull;IsNotNull;Eq;Neq;Lt;Gt;Leq;Geq;&quot; d:displayName=&quot;App Modified By&quot; type=&quot;x:string&quot; /&gt;&lt;/x:complexType&gt;&lt;/x:element&gt;&lt;/x:sequence&gt;&lt;/x:complexType&gt;&lt;/x:element&gt;&lt;/x:schema&gt;&lt;View Name=&quot;{42355225-3FCA-460B-BF61-F85488ED7D95}&quot; MobileView=&quot;TRUE&quot; Type=&quot;HTML&quot; Hidden=&quot;TRUE&quot; DisplayName=&quot;&quot; Url=&quot;/baf3/SitePages/test.aspx&quot; Level=&quot;1&quot; BaseViewID=&quot;1&quot; ContentTypeID=&quot;0x&quot; ImageUrl=&quot;/_layouts/15/images/generic.png?rev=23&quot; UIVersion=&quot;15&quot;&gt;&lt;Query&gt;&lt;OrderBy&gt;&lt;FieldRef Name=&quot;ID&quot; /&gt;&lt;/OrderBy&gt;&lt;/Query&gt;&lt;ViewFields&gt;&lt;FieldRef Name=&quot;Edit&quot; FieldType=&quot;Computed&quot; RealFieldName=&quot;Edit&quot; DisplayName=&quot;Edit&quot; ID=&quot;503f1caa-358e-4918-9094-4a2cdc4bc034&quot; ReadOnly=&quot;TRUE&quot; Sortable=&quot;FALSE&quot; ClassInfo=&quot;Icon&quot; Type=&quot;Computed&quot; NoAggregate=&quot;TRUE&quot; Filterable=&quot;FALSE&quot; AllowGridEditing=&quot;FALSE&quot; /&gt;&lt;FieldRef Name=&quot;LinkTitle&quot; FieldType=&quot;Computed&quot; RealFieldName=&quot;Title&quot; DisplayName=&quot;Title&quot; ID=&quot;82642ec8-ef9b-478f-acf9-31f7d45fbc31&quot; ClassInfo=&quot;Menu&quot; Type=&quot;Computed&quot; listItemMenu=&quot;TRUE&quot; AllowGridEditing=&quot;TRUE&quot; /&gt;&lt;FieldRef Name=&quot;c_cCCFDSolutionID&quot; FieldType=&quot;Integer&quot; RealFieldName=&quot;c_cCCFDSolutionID&quot; DisplayName=&quot;Solution ID&quot; ID=&quot;f3e1b63d-2e0a-4f9a-ba3b-158e9b363d18&quot; Type=&quot;Integer&quot; AllowGridEditing=&quot;TRUE&quot; /&gt;&lt;FieldRef Name=&quot;c_cCCFDSolutionName&quot; FieldType=&quot;Text&quot; RealFieldName=&quot;c_cCCFDSolutionName&quot; DisplayName=&quot;Solution Name&quot; ID=&quot;2f0daf25-2f9a-4348-b2de-7d5a752d5475&quot; Type=&quot;Text&quot; AutoHyperLink=&quot;TRUE&quot; AllowGridEditing=&quot;TRUE&quot; /&gt;&lt;FieldRef Name=&quot;c_cCCFDSolutionDescription&quot; FieldType=&quot;Note&quot; RealFieldName=&quot;c_cCCFDSolutionDescription&quot; DisplayName=&quot;Descprition&quot; ID=&quot;ad443f61-e932-411b-b4b8-7e299aec76b9&quot; Sortable=&quot;FALSE&quot; Type=&quot;Note&quot; NoAggregate=&quot;TRUE&quot; Filterable=&quot;FALSE&quot; AllowGridEditing=&quot;TRUE&quot; /&gt;&lt;/ViewFields&gt;&lt;RowLimit Paged=&quot;TRUE&quot;&gt;30&lt;/RowLimit&gt;&lt;JSLink&gt;clienttemplates.js&lt;/JSLink&gt;&lt;XslLink Default=&quot;TRUE&quot;&gt;main.xsl&lt;/XslLink&gt;&lt;Toolbar Type=&quot;Standard&quot; /&gt;&lt;List Direction=&quot;none&quot; TemplateType=&quot;100&quot; title=&quot;Solution&quot; description=&quot;&quot; basetype=&quot;0&quot; RootFolder=&quot;&quot; version=&quot;13&quot; name=&quot;{16CCD933-5584-4119-8E87-2F7698F03A50}&quot; moderatedlist=&quot;0&quot; SendToLocationName=&quot;&quot; SendToLocationUrl=&quot;&quot; WriteSecurity=&quot;1&quot; EnableMinorVersions=&quot;0&quot; VersioningEnabled=&quot;0&quot; ForceCheckout=&quot;0&quot; WorkflowsAssociated=&quot;0&quot; DefaultItemOpen=&quot;0&quot; RecycleBinEnabled=&quot;1&quot; ExternalDataList=&quot;0&quot; OfficialFileNames=&quot;&quot; EnableSyndication=&quot;1&quot; enablecontenttypes=&quot;1&quot; /&gt;&lt;/View&gt;&lt;ParamBindings&gt;  &amp;lt;ParameterBinding Name=&quot;dvt_sortdir&quot; Location=&quot;Postback;Connection&quot;/&amp;gt;
+            &amp;lt;ParameterBinding Name=&quot;dvt_sortfield&quot; Location=&quot;Postback;Connection&quot;/&amp;gt;
+            &amp;lt;ParameterBinding Name=&quot;dvt_startposition&quot; Location=&quot;Postback&quot; DefaultValue=&quot;&quot;/&amp;gt;
+            &amp;lt;ParameterBinding Name=&quot;dvt_firstrow&quot; Location=&quot;Postback;Connection&quot;/&amp;gt;
+            &amp;lt;ParameterBinding Name=&quot;OpenMenuKeyAccessible&quot; Location=&quot;Resource(wss,OpenMenuKeyAccessible)&quot; /&amp;gt;
+            &amp;lt;ParameterBinding Name=&quot;open_menu&quot; Location=&quot;Resource(wss,open_menu)&quot; /&amp;gt;
+            &amp;lt;ParameterBinding Name=&quot;select_deselect_all&quot; Location=&quot;Resource(wss,select_deselect_all)&quot; /&amp;gt;
+            &amp;lt;ParameterBinding Name=&quot;idPresEnabled&quot; Location=&quot;Resource(wss,idPresEnabled)&quot; /&amp;gt;&amp;lt;ParameterBinding Name=&quot;NoAnnouncements&quot; Location=&quot;Resource(wss,noXinviewofY_LIST)&quot; /&amp;gt;&amp;lt;ParameterBinding Name=&quot;NoAnnouncementsHowTo&quot; Location=&quot;Resource(wss,noXinviewofY_DEFAULT)&quot; /&amp;gt;&lt;/ParamBindings&gt;&lt;Rows /&gt;&lt;/dsQueryResponse&gt;" __designer:CustomXsl="fldtypes_GroupPermissionChoice.xsl;fldtypes_LookupVersion.xsl;fldtypes_ManagedPath.xsl;fldtypes_ProjectComprehensive.xsl;fldtypes_ProjectComprehensiveChoice.xsl;fldtypes_ProjectComprehensiveChoiceOffice2003.xsl;FLDTYPES_PSCAdvancedComputedField.xsl;fldtypes_Ratings.xsl;fldtypes_vizit.xsl;fldtypes_WorkspaceMetadata.xsl" WebPart="true" Height="" Width=""><ParameterBindings>
+  <ParameterBinding Name="dvt_sortdir" Location="Postback;Connection"/>
+            <ParameterBinding Name="dvt_sortfield" Location="Postback;Connection"/>
+            <ParameterBinding Name="dvt_startposition" Location="Postback" DefaultValue=""/>
+            <ParameterBinding Name="dvt_firstrow" Location="Postback;Connection"/>
+            <ParameterBinding Name="OpenMenuKeyAccessible" Location="Resource(wss,OpenMenuKeyAccessible)" />
+            <ParameterBinding Name="open_menu" Location="Resource(wss,open_menu)" />
+            <ParameterBinding Name="select_deselect_all" Location="Resource(wss,select_deselect_all)" />
+            <ParameterBinding Name="idPresEnabled" Location="Resource(wss,idPresEnabled)" /><ParameterBinding Name="NoAnnouncements" Location="Resource(wss,noXinviewofY_LIST)" /><ParameterBinding Name="NoAnnouncementsHowTo" Location="Resource(wss,noXinviewofY_DEFAULT)" /></ParameterBindings>
+<DataFields>
+</DataFields>
+<XmlDefinition>
+<View Name="{42355225-3FCA-460B-BF61-F85488ED7D95}" MobileView="TRUE" Type="HTML" Hidden="TRUE" DisplayName="" Url="/baf3/SitePages/test.aspx" Level="1" BaseViewID="1" ContentTypeID="0x" ImageUrl="/_layouts/15/images/generic.png?rev=23" ><Query><OrderBy><FieldRef Name="ID"/></OrderBy></Query><ViewFields><FieldRef Name="Edit"/><FieldRef Name="LinkTitle"/><FieldRef Name="c_cCCFDSolutionID"/><FieldRef Name="c_cCCFDSolutionName"/><FieldRef Name="c_cCCFDSolutionDescription"/></ViewFields><RowLimit Paged="TRUE">30</RowLimit><JSLink>clienttemplates.js</JSLink><XslLink Default="TRUE">main.xsl</XslLink><Toolbar Type="Standard"/></View></XmlDefinition>
+</WebPartPages:XsltListViewWebPart>
+
+</ZoneTemplate></WebPartPages:WebPartZone> </td>
+				</tr>
+				<SharePoint:ScriptBlock runat="server" __designer:Preview="&lt;script type=&quot;text/javascript&quot;&gt;// &lt;![CDATA[ 
+
+if(typeof(MSOLayout_MakeInvisibleIfEmpty) == &quot;function&quot;) {MSOLayout_MakeInvisibleIfEmpty();}// ]]&gt;
+&lt;/script&gt;" __designer:Values="&lt;P N=&#39;ID&#39; ID=&#39;1&#39; T=&#39;ctl05&#39; /&gt;&lt;P N=&#39;Page&#39; ID=&#39;2&#39; /&gt;&lt;P N=&#39;TemplateControl&#39; R=&#39;2&#39; /&gt;&lt;P N=&#39;AppRelativeTemplateSourceDirectory&#39; R=&#39;-1&#39; /&gt;">if(typeof(MSOLayout_MakeInvisibleIfEmpty) == "function") {MSOLayout_MakeInvisibleIfEmpty();}</SharePoint:ScriptBlock>
+		</table>
+</asp:Content>
+
+
+]]>
+      </EnsureItem>
+    </EnsureList>
+  </SetWebContext>
+
+</BEEScript>
+

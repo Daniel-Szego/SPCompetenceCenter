@@ -1,0 +1,247 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- Competence Center Ticket Module Install Script
+-->
+
+<!-- Naming convenstion
+  Factory : FT
+  Field : FD
+  Content type : CT
+  List: LI
+  Lookup : LU
+-->
+
+
+
+<BEEScript>
+  <SetWebContext url="{__SP_STARTWEB__}">
+
+    <!-- FIELDS -->
+
+    <!-- General Logging Field -->
+    <EnsureField name="breLog" title="BRE Log" type="Note" mode="CreateOrUpdate"></EnsureField>
+
+    <!-- Customer Fields -->
+    <EnsureField name="c_cCCFDCustomerID" title_EN="Customer ID" title_DE="Kunden ID" type="Integer" mode="CreateOrUpdate"></EnsureField>
+    <EnsureField name="c_cCCFDCustomerName" title_EN="Customer Name" title_DE="Kundenname" type="Text" mode="CreateOrUpdate"></EnsureField>
+    <EnsureField name="c_cCCFDCustomerAddress" title_EN="Customer Address" title_DE="Kundenadresse" type="Text" mode="CreateOrUpdate"></EnsureField>
+    <EnsureField name="c_cCCFDCustomerDescription" title_EN="Descprition" title_DE="Beschreibung" type="Note" mode="CreateOrUpdate"></EnsureField>
+
+    <!-- Contract Fields -->
+    <EnsureField name="c_cCCFDContractID" title_EN="Contract ID" title_DE="Vertrag ID" type="Integer" mode="CreateOrUpdate"></EnsureField>
+    <EnsureField name="c_cCCFDContractName" title_EN="Contract Name" title_DE="Vertragsname" type="Text" mode="CreateOrUpdate"></EnsureField>
+    <EnsureField name="c_cCCFDContractType" title_EN="Contract Type" title_DE="Vertragtyp" type="Choice" mode="CreateOrUpdate"></EnsureField>
+    <EnsureField name="c_cCCFDContractDescription" title_EN="Descprition" title_DE="Beschreibung" type="Note" mode="CreateOrUpdate"></EnsureField>
+
+    <!-- Module Fields -->
+
+    
+    <!-- Order Fields -->
+
+    
+
+
+
+    <!-- Fields for Application -->
+    <EnsureField name="c_cCCFDApplicationID" title_EN="Application ID" title_DE="Anwendung ID" type="Integer" mode="CreateOrUpdate"></EnsureField>
+    <EnsureField name="c_cCCFDApplicationName" title_EN="Application name" title_DE="Anwendung Name" type="Text" mode="CreateOrUpdate"></EnsureField>
+
+    <!-- Fields for entity -->
+    <EnsureField name="c_cCCFDEntityID" title_EN="Entity ID" title_DE="Entität ID" type="Integer" mode="CreateOrUpdate"></EnsureField>
+    <EnsureField name="c_cCCFDEntityName" title_EN="Entity name" title_DE="Entität Name" type="Text" mode="CreateOrUpdate"></EnsureField>
+    <EnsureField name="c_cCCFDEntityType" title_EN="Entity type" title_DE="Entität Typ" type="Choice" choices="Abstract, Document" mode="CreateOrUpdate"></EnsureField>
+    <EnsureField name="c_cCCFDEntityDescription" title_EN="Entity description" title_DE="Objekt Beschreibung" type="Note" mode="CreateOrUpdate"></EnsureField>
+
+    <!-- Fields for property -->
+    <EnsureField name="c_cCCFDPropertyID" title_EN="Property ID" title_DE="Eigenschaft ID" type="Integer" mode="CreateOrUpdate"></EnsureField>
+    <EnsureField name="c_cCCFDPropertyName" title_EN="Property name" title_DE="Eigenschaft name" type="Text" mode="CreateOrUpdate"></EnsureField>
+    <EnsureField name="c_cCCFDPropertyType" title_EN="Property type" title_DE="Eigenschaft Typ" type="Choice" choices="Integer, Text, Note, DateTime, Counter, Number, URL, Guid" mode="CreateOrUpdate"></EnsureField>
+
+    <!-- Fields for template-->
+    <EnsureField name="c_cCCFDTemplateID" title_EN="Template ID" title_DE="Muster ID" type="Integer" mode="CreateOrUpdate"></EnsureField>
+    <EnsureField name="c_cCCFDTemplateName" title_EN="Template name" title_DE="Muster Name" type="Text" mode="CreateOrUpdate"></EnsureField>
+    <EnsureField name="c_cCCFDTemplate" title_EN="Template" title_DE="Muster" type="Note" mode="CreateOrUpdate"></EnsureField>
+
+    <!-- Fields for localisation ?? -->
+
+    <!-- Fields Rules ?? -->
+
+    <!-- Fields Reports ?? -->
+
+    <!-- Fields Process ?? -->
+
+    <!-- Fields UI ?? -->
+
+
+    <!-- /FIELDS -->
+
+    <!-- CONTENT TYPE DEFINITIONS -->
+
+
+    <!-- Content Type Entity configurator -->
+    <!-- content types for the application factory is release 2
+
+        <EnsureContentType mode="createOrUpdate" name="c_cCCCTEntityConfigurator" template="Item">
+          <AssignField name="c_cCCFDEntityID" hidden="False" />
+          <AssignField name="c_cCCFDModulName" required="true" hidden="False" />
+          <AssignField name="c_cCCFDSubModul" hidden="False" />
+          <AssignField name="c_cCCFDEntityName" hidden="False" />
+          <AssignField name="c_cCCFDEntityDescription" hidden="False" />
+          <AssignField name="c_cCCFDPropertyName" hidden="False" />
+          <AssignField name="c_cCCFDPropertyType" hidden="False" />
+          <AssignField name="breLog" hidden="False" />
+        </EnsureContentType>     -->
+
+    <!-- /CONTENT TYPE DEFINITIONS -->
+
+    <!-- LIST DEFINITIONS -->
+
+    <!-- Module list -->
+    <EnsureList type="GenericList" name="c_cCCLIModule" title_EN="Moduls" title_DE="Modulen" contentTypesEnabled="True">
+      <AssignField name="c_cCCFDModulID" hidden="False" />
+      <AssignField name="c_cCCFDModulName" hidden="False" />
+      <EnsureView name="[defaultView]" ViewFields="Edit, LinkTitle, c_cCCFDModulID, c_cCCFDModulName"></EnsureView>
+      <EnsureView name="debug" ViewFields="Edit, LinkTitle, c_cCCFDModulID, c_cCCFDModulName, breLog"></EnsureView>
+    </EnsureList>
+
+    <!-- Application list -->
+    <EnsureList type="GenericList" name="c_cCCLIApplication" title_EN="Applications" title_DE="Anwendungen" contentTypesEnabled="True">
+      <AssignField name="c_cCCFDApplicationID" hidden="False" />
+      <AssignField name="c_cCCFDApplicationName" hidden="False" />
+      <EnsureView name="[defaultView]" ViewFields="Edit, LinkTitle, c_cCCFDApplicationID, c_cCCFDApplicationName"></EnsureView>
+      <EnsureView name="debug" ViewFields="Edit, LinkTitle, c_cCCFDApplicationID, c_cCCFDApplicationName, breLog"></EnsureView>
+    </EnsureList>
+
+    <!-- Entity list -->
+    <EnsureList type="GenericList" name="c_cCCLIEntity" title_EN="Business Entities" title_DE="Abstrakt Entitäten" contentTypesEnabled="True">
+      <AssignField name="c_cCCFDEntityID" hidden="False" />
+      <AssignField name="c_cCCFDEntityName" hidden="False" />
+      <AssignField name="c_cCCFDEntityType" hidden="False" />
+      <AssignField name="c_cCCFDEntityDescription" hidden="False" />
+      <EnsureView name="[defaultView]" ViewFields="Edit, LinkTitle, c_cCCFDEntityID, c_cCCFDEntityName, c_cCCFDEntityType, c_cCCFDEntityDescription"></EnsureView>
+      <EnsureView name="debug" ViewFields="Edit, LinkTitle, c_cCCFDEntityID, c_cCCFDEntityName, c_cCCFDEntityType, c_cCCFDEntityDescription, breLog"></EnsureView>
+    </EnsureList>
+
+    <!-- Property list -->
+    <EnsureList type="GenericList" name="c_cCCLIProperty" title_EN="Business Properties" title_DE="Abstrakt Eigenschaften" contentTypesEnabled="True">
+      <AssignField name="c_cCCFDPropertyID" hidden="False" />
+      <AssignField name="c_cCCFDPropertyName" hidden="False" />
+      <AssignField name="c_cCCFDPropertyType" hidden="False" />
+      <EnsureView name="[defaultView]" ViewFields="Edit, LinkTitle, c_cCCFDPropertyID, c_cCCFDPropertyName, c_cCCFDPropertyType"></EnsureView>
+      <EnsureView name="debug" ViewFields="Edit, LinkTitle, c_cCCFDPropertyID, c_cCCFDPropertyName, c_cCCFDPropertyType, breLog"></EnsureView>
+    </EnsureList>
+
+
+
+
+
+    <!-- Entity configurator list -->
+    <EnsureList type="GenericList" name="c_cCCLIEntityConfigurator" title_EN="Entity configurator" title_DE="Entität Konfigurator" contentTypesEnabled="True">
+      <AssignContentType name="c_cCCCTEntityConfigurator" />
+      <DeleteContentType name="Item" />
+      <EnsureView name="[defaultView]" ViewFields="Edit, LinkTitle, c_cCCFDEntityID, c_cCCFDModulName, c_cCCFDSubModul, c_cCCFDEntityName, c_cCCFDEntityDescription, c_cCCFDPropertyName, c_cCCFDPropertyType, c_cCCFDPropertyContains"></EnsureView>
+      <EnsureView name="debug" ViewFields="Edit, LinkTitle, c_cCCFDEntityID, c_cCCFDModulName, c_cCCFDSubModul, c_cCCFDEntityName, c_cCCFDEntityDescription, c_cCCFDPropertyName, c_cCCFDPropertyType, c_cCCFDPropertyContains, breLog"></EnsureView>
+    </EnsureList>
+
+    <!-- /LIST DEFINITIONS -->
+
+
+
+
+    <!-- LIST CONTENT General -->
+
+    <!-- Module  -->
+    <EnsureList type="GenericList" name="c_cCCLIModule" title_EN="Moduls" title_DE="Modulen" contentTypesEnabled="True">
+      <EnsureItems mode="CreateOrUpdate" keyFields="c_cCCFDModulID" separator=";" quotedSeparator="\;">
+        <![CDATA[
+            Title; c_cCCFDModulID; c_cCCFDModulName
+            1; 1; HR; 
+            2; 2; QM
+            ]]>
+      </EnsureItems>
+    </EnsureList>
+
+    <!-- Application  -->
+    <EnsureList type="GenericList" name="c_cCCLIApplication" title_EN="Applications" title_DE="Anwendungen" contentTypesEnabled="True">
+      <EnsureItems mode="CreateOrUpdate" keyFields="c_cCCFDApplicationID" separator=";" quotedSeparator="\;">
+        <![CDATA[
+              Title; c_cCCFDApplicationID; c_cCCFDApplicationName
+              1; 1; Skill Management; 
+              2; 2; Performance Evaluation
+              ]]>
+      </EnsureItems>
+    </EnsureList>
+
+    <!-- /LIST CONTENT General -->
+
+    <!-- LIST CONTENT Skill Management Applicaton -->
+    <!-- ID Generation rule : module_id(4 digit)  -->
+
+
+    <!-- Entity list -->
+    <EnsureList type="GenericList" name="c_cCCLIEntity" title_EN="Business Entities" title_DE="Abstrakt Entitäten" contentTypesEnabled="True">
+      <EnsureItems mode="CreateOrUpdate" keyFields="c_cCCFDEntityID" separator=";" quotedSeparator="\;">
+        <![CDATA[
+                Title; c_cCCFDEntityID; c_cCCFDEntityName; c_cCCFDEntityType; c_cCCFDEntityDescription
+                10001; 10001; Personendaten; Abstract; Persondaten
+                10002; 10002; Sprachkentnisse; Abstract; Sprachkentnisse
+                10003; 10003; Kompetenzberecih; Abstract; Kompetenzberecih
+                10004; 10004; Führungserfahrung; Abstract; Führungserfahrung
+                10005; 10005; Auslanderfahrung; Abstract; Auslanderfahrung
+                10006; 10006; Fachliche Kompetenz; Abstract; Fachliche Kompetenz
+                10007; 10007; Programiersprache; Abstract; Programiersprache
+                10008; 10008; Zertifikat / Weiterbuildung; Document; Zertifikat / Weiterbuildung
+                10009; 10009; Projekterfahrungen; Abstract; Projekterfahrungen              
+                ]]>
+      </EnsureItems>
+    </EnsureList>
+
+    <!-- Property list -->
+    <EnsureList type="GenericList" name="c_cCCLIProperty" title_EN="Business Properties" title_DE="Abstrakt Eigenschaften" contentTypesEnabled="True">
+      <EnsureItems mode="CreateOrUpdate" keyFields="c_cCCFDEntityID" separator=";" quotedSeparator="\;">
+        <![CDATA[
+                Title; c_cCCFDPropertyID; c_cCCFDPropertyName; c_cCCFDPropertyType
+                10001; 10001; wwwID; Integer
+                10002; 10002; Nachname; Text 
+                10003; 10003; Vorname; Text
+                10004; 10004; Geschlecht; Text
+                10005; 10005; Geburtsjahr; Text
+                10006; 10006; Schulabschluss; Text 
+                10007; 10007; Ausbildung; Text
+                10008; 10008; AktuelleFunktion; Text
+                10010; 10010; Brancherfahrung; Text
+                10011; 10011; Sprache; Text
+                10012; 10012; SprachKentnisse; Text 
+                10013; 10013; Rolle; Text
+                10014; 10014; Zeitspanne; Text
+                10015; 10015; Land; Text
+                10016; 10016; Kentnisse; Text 
+                10017; 10017; Kompetenz; Text
+                10018; 10018; ProgrammingSprache; Text
+                10019; 10019; ZertifikatTyp; Text
+                10020; 10020; ProjektRolle; Text
+                10021; 10021; Branche; Text
+                10022; 10022; Ab; Text
+                10023; 10023; Bis; Text
+                10024; 10024; Kunde; Text
+                ]]>
+      </EnsureItems>
+    </EnsureList>
+
+    <!-- Entity Configurator -->
+    <EnsureList type="GenericList" name="c_cCCLIEntityConfigurator" title_EN="Entity configurator" title_DE="Entität Konfigurator" contentTypesEnabled="True">
+      <EnsureItems mode="CreateOrUpdate" keyFields="c_cwiwID" separator=";" quotedSeparator="\;">
+        <![CDATA[
+          Title; c_cCCFDEntityID; c_cCCFDModulName; c_cCCFDSubModul, c_cCCFDEntityName, c_cCCFDEntityDescription, c_cCCFDPropertyName, c_cCCFDPropertyType, c_cCCFDPropertyContains
+          1; 1; wwwID; HR; Skill Management; Persondata; 
+          1; 2; Chuck; Norris
+          ]]>
+      </EnsureItems>
+    </EnsureList>
+
+    <!-- /LIST CONTENT Skill Management Applicaton-->
+
+
+
+  </SetWebContext>
+</BEEScript>
+

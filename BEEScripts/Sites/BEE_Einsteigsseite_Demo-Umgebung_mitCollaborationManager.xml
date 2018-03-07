@@ -1,0 +1,109 @@
+<!-- Einstiegseite Demo Umgebung mit Collaboration Manager
+-->
+
+
+<?xml version="1.0" encoding="utf-8"?>
+<BEEScript>
+	<SetWebContext	url="">
+	
+	<!-- Rauminformationen -->
+	<!-- <EnsureField name="demobreLog" title="log" type="Text" mode="CreateOrUpdate" group="DEMO" /> -->
+		<EnsureField name="demoBesitzer" title="Besitzer" type="user" mode="CreateOrUpdate" group="DEMO" />
+		<EnsureField name="demoKundenname" title="Kundenname" type="Text" mode="CreateOrUpdate" group="DEMO" />
+		<EnsureField name="demoUnternehmensbereich" title="Unternehmensbereich" type="choice" choices="Controlling, Einkauf, GL, Personal, Marketing, Produktion, QM, Vertrieb" mode="CreateOrUpdate" group="DEMO" />
+		<EnsureField name="demoZustaendig" title="Zuständig" type="user" mode="CreateOrUpdate" group="DEMO" />
+		<EnsureField name="demoMitglieder" title="Mitglieder" type="user" mode="CreateOrUpdate" group="DEMO" />
+		<EnsureField name="demoBesucher" title="Besucher" type="user" mode="CreateOrUpdate" group="DEMO" />
+		<EnsureField name="demoUnternehmen" title="Unternehmen" type="choice" choices="TK Lindau, SW Lindau" mode="CreateOrUpdate" group="DEMO" />
+	
+	<!-- News -->
+		<EnsureField name="demoNewsText" title="News Text" type="text" mode="CreateOrUpdate" group="DEMO" />
+		<!-- <EnsureField name="demoNewsTeaser" title="News Teaser" type="text" mode="CreateOrUpdate" group="DEMO" /> -->
+		<EnsureField name="demoNewsPic" title="News Pic" type="URL" mode="CreateOrUpdate" group="DEMO" />
+		<EnsureField name="demoArchivierungsdatum" title="Archivierungsdatum" type="datetime" p_DisplayFormat="DateOnly" mode="CreateOrUpdate" group="DEMO" />
+		
+	<!-- ContentType News -->
+		<EnsureContentType name="News"
+			template="Item"
+			group="DEMO"
+			>
+		<AssignField name="title"/>
+		<AssignField name="demoNewsText"/>
+		<!-- <AssignField name="demoNewsTeaser"/> -->
+		<AssignField name="demoNewsPic"/>
+		</EnsureContentType>
+		
+		<!-- ContentType Abteilung -->
+		<EnsureContentType name="Abteilung"
+			template="Arbeitsbereich"
+			group="DEMO"
+			>
+		<AssignField name ="demoUnternehmen"/>
+			<AssignField name ="demoBesucher"/>
+			<AssignField name ="demoBesitzer"/>
+			<AssignField name ="demoMitglieder"/>
+			<AssignField name ="demoUnternehmensbereich"/>
+			<AssignField name ="demoZustaendig"/>
+			<AssignField name ="demoKundenname"/>
+		</EnsureContentType>
+		
+		<!-- ContentType Community -->
+		<EnsureContentType name="Community"
+			template="Arbeitsbereich"
+			group="DEMO"
+			>
+			<AssignField name ="demoUnternehmen"/>
+			<AssignField name ="demoBesucher"/>
+			<AssignField name ="demoBesitzer"/>
+			<AssignField name ="demoMitglieder"/>
+			<AssignField name ="demoUnternehmensbereich"/>
+			<AssignField name ="demoZustaendig"/>
+			<AssignField name ="demoKundenname"/>
+		</EnsureContentType>
+		
+		<!-- ContentType Projekt -->
+		<EnsureContentType name="Projekt"
+			template="Arbeitsbereich"
+			group="DEMO"
+			>
+			<AssignField name ="demoUnternehmen"/>
+			<AssignField name ="demoBesucher"/>
+			<AssignField name ="demoBesitzer"/>
+			<AssignField name ="demoMitglieder"/>
+			<AssignField name ="demoUnternehmensbereich"/>
+			<AssignField name ="demoZustaendig"/>
+			<AssignField name ="demoKundenname"/>
+		</EnsureContentType>
+		
+	<!-- Liste  Arbeitsbereiche-->
+		<EnsureList type="GenericList" mode="createOrUpdate"
+		p_OnQuickLaunch="true"
+		name="Arbeitsbereiche"
+		title="Arbeitsbereiche"
+		p_NavigateForFormsPages="true"
+		p_EnableFolderCreation="true"
+		contentTypesEnabled="true">
+			<AssignContentType name="Abteilung" />
+			<AssignContentType name="Projekt" />
+			<AssignContentType name="Community" />
+			<RemoveContentType name="Item"/>
+			<EnsureView name="[defaultView]" viewFields="Edit, LinkTitle, demoUnternehmen, demoUnternehmensbereich, ContentType, demoZustaendig"/>
+			<EnsureView name="Debug" viewFields="Edit, LinkTitle, demoURL, Editor, Modified"/>
+		</EnsureList>
+		
+	<!-- Liste  News-->
+		<EnsureList type="GenericList" mode="createOrUpdate"
+		p_OnQuickLaunch="true"
+		name="News"
+		title="News"
+		p_NavigateForFormsPages="true"
+		p_EnableFolderCreation="true"
+		contentTypesEnabled="true">
+			<AssignContentType name="News" />
+			<RemoveContentType name="Item"/>	
+			<EnsureView name="[defaultView]" viewFields="Title"/>
+			<EnsureView name="Uebersicht" viewFields="Edit, LinkTitle, Title, demoNewsText, Editor"/>
+			<EnsureView name="Debug" viewFields="Edit, LinkTitle, Editor, Modified"/>
+		</EnsureList>
+	</SetWebContext>
+</BEEScript>
